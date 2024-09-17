@@ -27,7 +27,11 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/Helpers/CommonHelper.php",
+            "app/Helpers/IconHelper.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [
