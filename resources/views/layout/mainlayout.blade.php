@@ -9,12 +9,10 @@
     @include('layout.partials.loader')
     <!-- Main Wrapper -->
     <div class="main-wrapper">
-        @if (!Route::is(['error-404', 'error-500', 'forgetpassword', 'resetpassword', 'signin', 'signup']))
-            @include('layout.partials.header')
-        @endif
-        @if (!Route::is(['error-404', 'error-500', 'forgetpassword', 'pos', 'resetpassword', 'signin', 'signup']))
-            @include('layout.partials.sidebar')
-        @endif
+        @include('layout.partials.header')
+
+        @include('layout.partials.sidebar')
+        
         @yield('content')
     </div>
     <!-- /Main Wrapper -->
