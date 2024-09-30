@@ -7,6 +7,5 @@ function getRouteName()
 }
 
 function getAuthUser() {
-    return Auth::user();
-
+    return auth()->guard(view()->shared('auth_gaurd'))->user();
 }

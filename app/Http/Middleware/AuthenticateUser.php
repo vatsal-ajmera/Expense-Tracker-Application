@@ -14,14 +14,14 @@ class AuthenticateUser
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next) : Response
     {
         if (Auth::guard(view()->shared('auth_gaurd'))->check()) {
-			return $next($request);
-		}
-
-		return redirect('login')->with([
-				'warning' => 'You must have to be logged in.',
-            ]);
+            return $next($request);
+        }
+        
+        return redirect('login')->with([
+            'warning' => 'You must have to be logged in.',
+        ]);
     }
 }

@@ -15,20 +15,24 @@
                         <h4>Please login to your account</h4>
                     </div>
 
-                    <form action="" method="post">
+                    <form method="post" id='loginFormAdmin' action="{{ Route('auth.post_login')}}">
+                        @csrf
                         <div class="form-login">
                             <label>Email</label>
                             <div class="form-addons">
-                                <input type="text" placeholder="Enter your email address">
+                                <input type="text" placeholder="Enter your email address" name="email" class="form-control">
                                 <img src="{{ url('assets/img/icons/mail.svg') }}" alt="img">
                             </div>
+                            <span id="error-email" class="invalid-feedback"></span>
                         </div>
+
                         <div class="form-login">
                             <label>Password</label>
                             <div class="pass-group">
-                                <input type="password" class="pass-input" placeholder="Enter your password">
+                                <input type="password" class="pass-input form-control" placeholder="Enter your password" name="password" class="form-control">
                                 <span class="fas toggle-password fa-eye-slash"></span>
                             </div>
+                            <span id="error-password" class="invalid-feedback"></span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -45,13 +49,11 @@
                         </div>
 
                         <div class="form-login">
-                            <button class="btn btn-login mb-1" type="submit">
-                                Login
-                            </button>
-                            {{-- <button class="btn btn-login mb-1" type="button" disabled>
+                            <button class="btn btn-login mb-1" type="submit" id="login">Login</button>
+                            <button class="btn btn-login mb-1" type="button" id="loaderBtn" disabled style="display: none">
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                 Loading...
-                            </button> --}}
+                            </button>
                         </div>
                     </form>
 

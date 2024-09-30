@@ -1,13 +1,13 @@
 <!-- Header -->
 <div class="header">
     <div class="header-left active">
-        <a href="{{ Route('home') }}" class="logo logo-normal">
+        <a href="{{ Route('dashboard') }}" class="logo logo-normal">
             <img src="{{ url('assets/img/logo.png') }}" alt="">
         </a>
-        <a href="{{ Route('home') }}" class="logo logo-white">
+        <a href="{{ Route('dashboard') }}" class="logo logo-white">
             <img src="{{ url('assets/img/logo-white.png') }}" alt="">
         </a>
-        <a href="{{ Route('home') }}" class="logo-small">
+        <a href="{{ Route('dashboard') }}" class="logo-small">
             <img src="{{ url('assets/img/logo-small.png') }}" alt="">
         </a>
         <a id="toggle_btn" href="javascript:void(0);">
@@ -212,8 +212,7 @@
                     <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
                             data-feather="settings"></i>Settings</a>
                     <hr class="m-0">
-                    <a class="dropdown-item logout pb-0" href="{{ route('home') }}"
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                    <a class="dropdown-item logout pb-0" href="{{ route('logout') }}">
                         <img src="{{ URL::asset('/assets/img/icons/log-out.svg') }}" class="me-2"
                             alt="img">Logout</a>
                 </div>
@@ -222,10 +221,6 @@
     </ul>
     <!-- /Header Menu -->
 
-    <form id="logout-form" action="{{ route('home') }}" method="POST" class="d-none">
-        @csrf
-    </form>
-
     <!-- Mobile Menu -->
     <div class="dropdown mobile-user-menu">
         <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
@@ -233,8 +228,7 @@
         <div class="dropdown-menu dropdown-menu-right">
             <a class="dropdown-item" href="profile.html">My Profile</a>
             <a class="dropdown-item" href="generalsettings.html">Settings</a>
-            <a class="dropdown-item" href="{{ route('home') }}"
-                onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>
+            <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
         </div>
     </div>
     <!-- /Mobile Menu -->

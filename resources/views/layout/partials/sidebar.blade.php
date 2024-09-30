@@ -7,7 +7,7 @@
                     <h6 class="submenu-hdr">Main</h6>
                     <ul>
                         <li class="">
-                            <a href="{{ Route('home') }}"><i data-feather="grid"></i><span>Dashboard</span></a>
+                            <a href="{{ Route('dashboard') }}"><i data-feather="grid"></i><span>Dashboard</span></a>
                         </li>
                         
                     </ul>

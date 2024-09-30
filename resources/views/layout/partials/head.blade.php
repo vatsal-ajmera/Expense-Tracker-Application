@@ -16,5 +16,6 @@
 <link rel="stylesheet" href="{{url('assets/css/dataTables.bootstrap4.min.css')}}">
 <link rel="stylesheet" href="{{url('assets/plugins/fontawesome/css/fontawesome.min.css')}}">
 <link rel="stylesheet" href="{{url('assets/plugins/fontawesome/css/all.min.css')}}">
+<link rel="stylesheet" href="{{url('assets/plugins/toastr/toatr.css')}}">
 <!-- Main CSS -->
 <link rel="stylesheet" href="{{url('assets/css/style.css')}}">
