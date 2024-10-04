@@ -9,3 +9,9 @@ function getRouteName()
 function getAuthUser() {
     return auth()->guard(view()->shared('auth_gaurd'))->user();
 }
+function getAppLanguages() {
+    return view()->shared('app_languages');
+}
+function getCountryFlag($country_code) {
+    return url('assets/img/flags/' . $country_code . '.png');
+}

@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        view()->share('auth_gaurd', 'authenticate_guard' );
+        view()->share('auth_gaurd', 'authenticate_guard');
+        $languages = [
+            'en' => 'English',
+            'hin' => 'Hindi',
+            'fr' => 'French',
+        ];
+        view()->share('app_languages', $languages);
     }
 }

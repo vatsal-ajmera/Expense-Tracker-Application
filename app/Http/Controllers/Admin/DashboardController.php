@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         $this->gaurd = view()->shared('auth_gaurd');
         $this->meta_data = [
-            'title' => 'Admin Dashboard',
+            'title' => __('message.dashboard.page_title'),
             'description' => 'Admin Dashboard',
             'keywords' => 'Admin Dashboard',
         ];

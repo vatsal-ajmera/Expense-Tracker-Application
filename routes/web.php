@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Middleware\Google2FA;
@@ -18,13 +19,14 @@ Route::group(['as' => 'auth.'], function () {
 });
 
 Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class]], function () {
-    Route::get('otp-verify',[AuthController::class,'authenticate_user'])->name('otp_verify');
-    Route::post('post-otp-verify',[AuthController::class,'post_authenticate_user'])->name('post_otp_verify');
+    Route::get('otp-verify', [AuthController::class, 'authenticate_user'])->name('otp_verify');
+    Route::post('post-otp-verify', [AuthController::class, 'post_authenticate_user'])->name('post_otp_verify');
 
-    Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class,Google2FA::class]], function () {
+    Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class, Google2FA::class]], function () {
+        Route::get('change-language/{lang}', [LanguageController::class, 'changeAppLanguage'])->name('change_app_language');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('logout',[AuthController::class,'logout'])->name('logout');
-        
-        Route::get('dashboard',[DashboardController::class,'index'])->name('dashboard');
+
+        Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

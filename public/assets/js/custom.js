@@ -116,6 +116,7 @@ airpos_validation = {
                     toggleLoader(false)
                     console.log(response.data)
                     if(response.data.status == true){
+                        airpos_app.notifyWithToastr('success', response.data.message, 'Invalid credentials')
                         window.location.href = response.data.data.redirect;
                     }else{
                         airpos_app.notifyWithToastr('error', response.data.message, 'Invalid credentials')
@@ -175,12 +176,15 @@ function toggleLoader(showLoader) {
     }
 }
 
+$(document).on("change", ".change-language", function () {
+	$(this).next('label.error').remove();
+});
+
 $(document).on('keydown', '.numbersOnly', function (e) {
 	if ($.inArray(e.keyCode, [8, 9, 27, 13, 189, 110]) !== -1 || (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || (e.keyCode >= 35 && e.keyCode <= 40)) {
 		return;
 	}
 	if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-		// alert("Dont allow");
 		e.preventDefault();
 	}
 });

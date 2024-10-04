@@ -50,19 +50,12 @@
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button">
                 <i data-feather="globe"></i>
             </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                <a href="javascript:void(0);" class="dropdown-item active">
-                    <img src="{{ url('assets/img/flags/us.png') }}" alt="" height="16"> English
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ url('assets/img/flags/fr.png') }}" alt="" height="16"> French
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ url('assets/img/flags/es.png') }}" alt="" height="16"> Spanish
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ url('assets/img/flags/de.png') }}" alt="" height="16"> German
-                </a>
+            <div class="dropdown-menu dropdown-menu-right change-language">
+                @foreach (getAppLanguages() as $key => $item)
+                    <a href="{{ Route('change_app_language',$key) }}" class="dropdown-item {{ session()->get('locale') == $key ? 'active' : '' }}">
+                        <img src="{{ getCountryFlag($key) }}" alt="" height="16"> {{ $item }}
+                    </a>
+                @endforeach
             </div>
         </li>
         <!-- /Flag -->

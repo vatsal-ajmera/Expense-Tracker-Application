@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Config;
+
 use Session;
 
 class AuthController extends Controller
@@ -54,7 +54,7 @@ class AuthController extends Controller
                 );
                 Session::put('qr_image', $qr_image);
             }
-
+            session::put('locale',  Config::get('app.locale'));
             $data = [
                 'redirect' => route('dashboard')
             ];
