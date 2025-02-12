@@ -15,6 +15,7 @@ Route::get('/', function () {
 
 Route::group(['as' => 'auth.'], function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::any('/forgot-password', [AuthController::class, 'forgot_password'])->name('forgot_password');
     Route::post('/post-login', [AuthController::class, 'post_login'])->name('post_login');
 });
 

@@ -33,7 +33,7 @@ class AuthController extends Controller
         if (auth()->guard($this->gaurd)->check()) :
             return redirect($this->redirect_after_login);
         endif;
-        return view('auth/login', ['meta_data' => $this->meta_data]);
+        return view('auth.login', ['meta_data' => $this->meta_data]);
     }
 
     public function post_login(Request $request)
@@ -92,6 +92,19 @@ class AuthController extends Controller
         }
 
         return $this->send_error_response([], 'Provided OTP is invalid', 200);
+    }
+
+    public function forgot_password(Request $request) {
+        if ($request->isMethod('GET')) {
+            $this->meta_data = [
+                'title' => 'Reset Password',
+                'description' => 'Reset Password',
+                'keywords' => 'Reset Password',
+            ];
+            return view('auth.forgot-password', ['meta_data' => $this->meta_data]);
+        }elseif ($request->isMethod('POST')){
+            
+        }
     }
 
     public function logout()

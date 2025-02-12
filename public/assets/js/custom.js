@@ -163,6 +163,41 @@ airpos_validation = {
 			}
 		});
 
+		$('#forgotPasswordForm').validate({
+            errorClass: "is-invalid", 
+            validClass: "is-valid", 
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              error.insertAfter(element);
+            },
+			rules: {
+				email: {
+					required: true
+				},
+			},
+			messages: {
+				email: {
+					required: "Please enter valid email address."
+				}
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }else{
+                        airpos_app.notifyWithToastr('error', response.data.message, 'Invalid OTP')
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+
 	}
 };
 
