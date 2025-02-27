@@ -8,6 +8,7 @@ use App\Mail\sendResetPasswordMail;
 use App\Models\passwordReset;
 use App\Models\User;
 use Carbon\Carbon;
+use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -140,7 +141,32 @@ class AuthController extends Controller
             'description' => 'Reset Password',
             'keywords' => 'Reset Password',
         ];
-        return view('auth.reset-password', ['meta_data' => $this->meta_data]);
+        $data = [
+            'token' => $token,
+            'email' => $updatePassword->email
+        ];
+        return view('auth.reset-password', ['meta_data' => $this->meta_data, 'data' => $data]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+            'password' => 'required|min:6',
+            'confirm_password' => 'required|min:6|same:password'
+        ]);
+
+        $is_update_passeord = User::where('email', $request->email)
+                    ->update(['password' => Hash::make($request->password)]);
+        if ($is_update_passeord) {
+            $data = [
+                'redirect' => route('auth.login')
+            ];
+            passwordReset::where(['email'=> $request->email])->delete();
+            Session::put('password_reset', 'Password Reset Successfully');
+            return $this->send_response($data, '');
+        }
+        
     }
 
     public function logout()

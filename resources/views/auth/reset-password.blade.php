@@ -16,6 +16,8 @@
 
                     <form method="post" id='resetPasswordForm' action="{{ Route('auth.reset.password.post')}}">
                         @csrf
+                        <input type="hidden" name="token" value="{{ $data['token'] }}">
+                        <input type="hidden" name="email" value="{{ $data['email'] }}">
                         <div class="form-login">
                             <label>Password</label>
                             <div class="pass-group">

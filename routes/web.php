@@ -24,7 +24,7 @@ Route::group(['as' => 'auth.'], function () {
     Route::any('/forgot-password', [AuthController::class, 'forgot_password'])->name('forgot_password');
     Route::post('/forgot-password', [AuthController::class, 'forgot_password'])->name('forgot_password.post');
     Route::get('reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('reset.password.get');
-    Route::post('reset-password', [AuthController::class, 'submitResetPasswordForm'])->name('reset.password.post');
+    Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('reset.password.post');
     Route::post('/post-login', [AuthController::class, 'post_login'])->name('post_login');
 }); 
 
