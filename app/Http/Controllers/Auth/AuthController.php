@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Email;
+use App\Mail\sendResetPasswordMail;
+use App\Models\passwordReset;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 
 use Session;
+use Str;
 
 class AuthController extends Controller
 {
@@ -97,14 +102,45 @@ class AuthController extends Controller
     public function forgot_password(Request $request) {
         if ($request->isMethod('GET')) {
             $this->meta_data = [
-                'title' => 'Reset Password',
-                'description' => 'Reset Password',
-                'keywords' => 'Reset Password',
+                'title' => 'Forgot Password',
+                'description' => 'Forgot Password',
+                'keywords' => 'Forgot Password',
             ];
             return view('auth.forgot-password', ['meta_data' => $this->meta_data]);
         }elseif ($request->isMethod('POST')){
-            
+            $request->validate([
+                'email' => 'required|email|exists:users',
+            ]);
+
+            $token = Str::random(64);
+            $recovery_token = str_replace('/', '-', $token);
+
+            passwordReset::updateOrCreate(
+                ['email' => $request->email],
+                ['email' => $request->email, 'token' => $recovery_token, 'created_at' => Carbon::now()]
+            );
+            Session::put('password_reset_link_set', 'We have e-mailed your password reset link!');
+
+            Email::dispatch([$request->email], new sendResetPasswordMail($recovery_token));
+            $data = [
+                'redirect' => route('auth.login')
+            ];
+            return $this->send_response($data, '');
         }
+    }
+
+    public function showResetPasswordForm($token)
+    {
+        $updatePassword = passwordReset::where('token', $token)->first();
+        if(!$updatePassword){
+            abort(404);
+        }
+        $this->meta_data = [
+            'title' => 'Reset Password',
+            'description' => 'Reset Password',
+            'keywords' => 'Reset Password',
+        ];
+        return view('auth.reset-password', ['meta_data' => $this->meta_data]);
     }
 
     public function logout()

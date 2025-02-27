@@ -14,6 +14,7 @@
                         <h3>Sign In</h3>
                         <h4>Please login to your account</h4>
                     </div>
+                    @include('components.flash-message')
 
                     <form method="post" id='loginFormAdmin' action="{{ Route('auth.post_login')}}">
                         @csrf

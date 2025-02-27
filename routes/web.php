@@ -11,13 +11,22 @@ Route::get('/', function () {
     return redirect('login');
 });
 
-
+/*
+    ## to enable Throttling
+    use Illuminate\Cache\RateLimiting\Limit;
+    RateLimiter::for('web', fn ($request) => Limit::perMinute(10)->by($request->ip()));
+    Route::middleware('throttle:web')->group(function () {
+    });
+*/
 
 Route::group(['as' => 'auth.'], function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::any('/forgot-password', [AuthController::class, 'forgot_password'])->name('forgot_password');
+    Route::post('/forgot-password', [AuthController::class, 'forgot_password'])->name('forgot_password.post');
+    Route::get('reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('reset.password.get');
+    Route::post('reset-password', [AuthController::class, 'submitResetPasswordForm'])->name('reset.password.post');
     Route::post('/post-login', [AuthController::class, 'post_login'])->name('post_login');
-});
+}); 
 
 Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class]], function () {
     Route::get('otp-verify', [AuthController::class, 'authenticate_user'])->name('otp_verify');

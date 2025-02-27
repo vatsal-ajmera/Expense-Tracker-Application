@@ -164,8 +164,7 @@ airpos_validation = {
 		});
 
 		$('#forgotPasswordForm').validate({
-            errorClass: "is-invalid", 
-            validClass: "is-valid", 
+            errorClass: "border-danger",
             errorElement: "div", 
             errorPlacement: function(error, element) {
               error.addClass('invalid-feedback');
@@ -188,8 +187,48 @@ airpos_validation = {
                     toggleLoader(false)
                     if(response.data.status == true){
                         window.location.href = response.data.data.redirect;
-                    }else{
-                        airpos_app.notifyWithToastr('error', response.data.message, 'Invalid OTP')
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+		$('#resetPasswordForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              error.insertAfter(element);
+            },
+			rules: {
+				password: {
+					required: true,
+					minlength: 6,
+					maxlength: 20,
+				},
+				confirm_password: {
+					required: true,
+					minlength: 6,
+					maxlength: 20,
+                    equalTo: '#password',
+				}                
+			},
+			messages: {
+				password: {
+					required: "Please enter valid password."
+				},
+				confirm_password: {
+					required: "Please enter valid confirm password."
+				}
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
                     }
                 }).catch(error => {
                     toggleLoader(false)

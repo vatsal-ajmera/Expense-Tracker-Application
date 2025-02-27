@@ -16,7 +16,7 @@
                             associated with your account.</h4>
                     </div>
 
-                    <form method="post" id='forgotPasswordForm' action="{{ Route('auth.forgot_password')}}">
+                    <form method="post" id='forgotPasswordForm' action="{{ Route('auth.forgot_password.post')}}">
                         @csrf
                         <div class="form-login">
                             <label>Email</label>
