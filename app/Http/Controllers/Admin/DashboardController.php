@@ -20,8 +20,7 @@ class DashboardController extends Controller
         ];
     }
     public function index(){
-        $auth = auth()->guard($this->gaurd);
-        // dd($auth->user());
-        return view('dashboard.index',['meta_data' => $this->meta_data]);
+        $auth_user = auth()->guard($this->gaurd);
+        return view('dashboard.index',['meta_data' => $this->meta_data, 'auth_user' => $auth_user]);
     }
 }

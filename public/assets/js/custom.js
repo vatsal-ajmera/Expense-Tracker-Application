@@ -236,6 +236,97 @@ airpos_validation = {
                 });
 			}
 		});
+		$('#updateAvatarForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              $('#avatarErrorContainer').html(error);
+            },
+			rules: {
+				avatar: {
+					required: true,
+				}
+			},
+			messages: {
+				avatar: {
+					required: "Please add valid avatar."
+				}
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+		$('#updateProfileForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              error.insertAfter(element);
+            },
+			rules: {
+				name: {
+					required: true,
+				},
+				last_name: {
+					required: true,
+				},
+				email: {
+					required: true,
+                    email: true,
+				},
+				phone: {
+					required: true,
+				},
+				confirm_password: {
+                    required: function() {
+                        return $('#password').val().trim() !== "";
+                    },
+                    equalTo: '#password',
+				},
+			},
+			messages: {
+				name: {
+					required: "Please add valid name."
+				},
+				last_name: {
+					required: "Please add valid last name."
+				},
+				email: {
+					required: "Please add valid email."
+				},
+				phone: {
+					required: "Please add valid phone."
+				},
+				confirm_password: {
+					required: "Please confirm your password.",
+                    equalTo: "Passwords do not match."
+				},
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
 
 	}
 };
@@ -243,7 +334,7 @@ airpos_validation = {
 function toggleLoader(showLoader) {
     if (showLoader == true) {
         $('#loaderBtn').show();
-        $('#login').hide();
+        $('#submit_form').hide();
     } else {
         $('#loaderBtn').hide();
         $('#login').show();

@@ -64,4 +64,15 @@ class User extends Authenticatable implements AuthorizableContract, Authenticata
             set: fn ($value) =>  encrypt($value),
         );
     }
+
+    public static function getUserRole($value)
+    {
+        return [
+            self::USER_TYPE_SUPER_ADMIN => 'Super Admin',
+            self::USER_TYPE_ADMIN => 'Admin',
+            self::USER_TYPE_CLIENT => 'Client',
+            self::USER_TYPE_SUPPLIER => 'Supplier',
+        ][$value
+        ];
+    }
 }

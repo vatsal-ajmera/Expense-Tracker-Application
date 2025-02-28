@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Middleware\Google2FA;
@@ -35,8 +36,9 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
     Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class, Google2FA::class]], function () {
         Route::get('change-language/{lang}', [LanguageController::class, 'changeAppLanguage'])->name('change_app_language');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-
+        Route::get('profile', [ProfileController::class, 'index'])->name('profile.get');
+        Route::post('profile/avatar', [ProfileController::class, 'saveAvatar'])->name('profile.avatar.post');
+        Route::post('profile', [ProfileController::class, 'saveProfile'])->name('profile.post');
         Route::get('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

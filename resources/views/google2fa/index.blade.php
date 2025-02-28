@@ -26,7 +26,7 @@
                             </div>
 
                             <div class="form-login">
-                                <button class="btn btn-login mb-1" type="submit" id="login">Verify</button>
+                                <button class="btn btn-login mb-1" type="submit" id="submit_form">Verify</button>
                                 <button class="btn btn-login mb-1" type="button" id="loaderBtn" disabled style="display: none">
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                     Verifying OTP...

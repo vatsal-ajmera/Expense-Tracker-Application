@@ -179,29 +179,23 @@
         <li class="nav-item dropdown has-arrow main-drop">
             <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
                 <span class="user-info">
-                    <span class="user-letter">
-                        <img src="{{ url('assets/img/profiles/avator1.jpg') }}" alt="" class="img-fluid">
+                    <span class="user-letter">                        
+                        @if (!empty(getAuthUser()->avatar))                                    
+                                <img src="{{ asset('storage/uploads/profile').'/' . getAuthUser()->avatar }}" alt="img" class="img-fluid">
+                            @else    
+                                <img src="{{ url('assets/img/profiles/avator1.jpg') }}" alt="" class="img-fluid">
+                            @endif
                     </span>
                     <span class="user-detail">
                         <span class="user-name">{{ getAuthUser()->name ?? 'Admin' }}</span>
-                        <span class="user-role">Super Admin</span>
+                        <span class="user-role">{{ App\Models\User::getUserRole(getAuthUser()->user_type) }}</span>
                     </span>
                 </span>
             </a>
             <div class="dropdown-menu menu-drop-user">
                 <div class="profilename">
-                    <div class="profileset">
-                        <span class="user-img"><img src="{{ url('assets/img/profiles/avator1.jpg') }}"
-                                alt="">
-                            <span class="status online"></span></span>
-                        <div class="profilesets">
-                            <h6>{{ getAuthUser()->name ?? 'Admin' }}</h6>
-                            <h5>Super Admin</h5>
-                        </div>
-                    </div>
                     <hr class="m-0">
-                    <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
-                        Profile</a>
+                    <a class="dropdown-item" href="{{ Route('profile.get') }}"> <i class="me-2" data-feather="user"></i> My Profile</a>
                     <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
                             data-feather="settings"></i>Settings</a>
                     <hr class="m-0">
@@ -219,7 +213,7 @@
         <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
             aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="profile.html">My Profile</a>
+            <a class="dropdown-item" href="{{ Route('profile.get') }}">My Profile</a>
             <a class="dropdown-item" href="generalsettings.html">Settings</a>
             <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
         </div>

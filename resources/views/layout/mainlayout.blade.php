@@ -16,7 +16,9 @@
         @yield('content')
     </div>
     <!-- /Main Wrapper -->
+    
     @include('layout.partials.footer-scripts')
+    @yield('page-js')
 </body>
 
 </html>

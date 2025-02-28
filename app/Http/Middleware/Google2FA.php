@@ -17,7 +17,7 @@ class Google2FA
     {
         $user = auth()->guard(view()->shared('auth_gaurd'))->user();
         
-        if ($user->google2fa_secret && $request->session()->get('2fa_verified') == false) {
+        if ($user->two_fa_varications == true && $user->google2fa_secret && $request->session()->get('2fa_verified') == false) {
             return redirect()->route('otp_verify');
         }
         return $next($request);
