@@ -14,13 +14,15 @@
                 </li>
 
                 <li class="submenu-open">
-                    <h6 class="submenu-hdr">Settings</h6>
+                    <h6 class="submenu-hdr">My Accounts</h6>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);"><i data-feather="settings"></i><span>Settings</span><span
+                            <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Accounts</span><span
                                     class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="generalsettings.html">General Settings</a></li>
+                                <li><a href="generalsettings.html">Bank Accounts</a></li>
+                                <li><a href="generalsettings.html">Credit Cards</a></li>
+                                <li><a href="generalsettings.html">Debit Cards</a></li>
                             </ul>
                         </li>
                     </ul>

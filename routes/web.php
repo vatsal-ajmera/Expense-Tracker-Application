@@ -36,9 +36,16 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
     Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class, Google2FA::class]], function () {
         Route::get('change-language/{lang}', [LanguageController::class, 'changeAppLanguage'])->name('change_app_language');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('profile', [ProfileController::class, 'index'])->name('profile.get');
-        Route::post('profile/avatar', [ProfileController::class, 'saveAvatar'])->name('profile.avatar.post');
-        Route::post('profile', [ProfileController::class, 'saveProfile'])->name('profile.post');
         Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('get');
+            Route::post('save-avatar', [ProfileController::class, 'saveAvatar'])->name('avatar.post');
+            Route::post('save-profile', [ProfileController::class, 'saveProfile'])->name('post');
+        });
+
+        Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
+            
+        });
     });
 });
