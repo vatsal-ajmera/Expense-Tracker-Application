@@ -17,14 +17,25 @@
                     <h6 class="submenu-hdr">My Accounts</h6>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Accounts</span><span
+                            <a href="javascript:void(0);"><i data-feather="user-check"></i><span>Accounts</span><span
                                     class="menu-arrow"></span></a>
                             <ul>
                                 <li><a href="{{ Route('accounts.list') }}">Bank Accounts</a></li>
-                                <li><a href="generalsettings.html">Credit Cards</a></li>
-                                <li><a href="generalsettings.html">Debit Cards</a></li>
                             </ul>
                         </li>
+                    </ul>
+                </li>
+                <li class="submenu-open">
+                    <h6 class="submenu-hdr">Expense & Credits</h6>								
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Expense</span><span class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{{ Route('category.list') }}">Expenses</a></li>
+                                <li><a href="{{ Route('category.list') }}">Expense Category</a></li>
+                            </ul>
+                        </li>
+                        
                     </ul>
                 </li>
             </ul>

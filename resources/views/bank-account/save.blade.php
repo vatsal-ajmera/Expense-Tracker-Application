@@ -24,7 +24,7 @@
 						<div class="col-lg-12">
 							<div class="form-group">
 								<label>Account Number</label>
-								<input type="text" name='number' placeholder="Account numbner here" value="{{ $account->number }}">
+								<input type="text" name='number' placeholder="Account numbner here" value="{{ $account->number ?? '' }}">
 							</div>
 						</div>
 

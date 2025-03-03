@@ -3,6 +3,7 @@
 <meta name="description" content="{{ $meta_data['description'] ?? 'POS - Bootstrap Admin Template' }}">
 <meta name="author" content="AIR POS: Inventory & POS System">
 <meta name="robots" content="noindex, nofollow">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>{{ $meta_data['title'] ?? getRouteName() }}</title>
 
 <!-- Favicon -->

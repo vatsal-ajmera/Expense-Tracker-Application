@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExpenseCategoryController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\AccountsController;
@@ -47,10 +48,20 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
 
         Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
             Route::get('/', [AccountsController::class, 'index'])->name('list');
+            Route::get('/get-records', [AccountsController::class, 'getRecords'])->name('get-records');
             Route::get('/create', [AccountsController::class, 'create'])->name('create');
             Route::post('/save', [AccountsController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [AccountsController::class, 'edit'])->name('edit');
-            Route::get('/delete/{id}', [AccountsController::class, 'edit'])->name('delete');
+            Route::delete('/delete/{id}', [AccountsController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'category', 'as' => 'category.'], function () {
+            Route::get('/', [ExpenseCategoryController::class, 'index'])->name('list');
+            Route::get('/get-records', [ExpenseCategoryController::class, 'getRecords'])->name('get-records');
+            Route::get('/create', [ExpenseCategoryController::class, 'create'])->name('create');
+            Route::post('/save', [ExpenseCategoryController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [ExpenseCategoryController::class, 'edit'])->name('edit');
+            Route::delete('/delete/{id}', [ExpenseCategoryController::class, 'delete'])->name('delete');
         });
     });
 });

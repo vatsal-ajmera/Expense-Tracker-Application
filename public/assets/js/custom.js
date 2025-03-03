@@ -74,34 +74,42 @@ airpos_app = {
             }
         }
     },
-
+    csrfToken : function(showLoader) {
+        return $('meta[name="csrf-token"]').attr('content');
+    },
     deleteItem: function (selector) {
         $(document).on("click", selector, function (e) {
             e.preventDefault();
-
             let deleteUrl = $(this).attr("href");
-
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
+                type: "warning",
+                showCancelButton: !0,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "Cancel",
-                buttonsStyling: false,
+                confirmButtonClass: "btn btn-primary",
+                cancelButtonClass: "btn btn-danger ml-1",
+                buttonsStyling: !1,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    airpos_app.ajaxRequest(deleteUrl, { _token: airpos_app.csrfToken() }, "DELETE")
+                    airpos_app
+                        .ajaxRequest(
+                            deleteUrl,
+                            { _token: airpos_app.csrfToken() },
+                            "DELETE"
+                        )
                         .then((response) => {
                             Swal.fire({
                                 icon: "success",
                                 title: "Deleted!",
-                                text: "Your file has been deleted.",
+                                text: response.data.message,
                                 confirmButtonClass: "btn btn-success",
                             }).then(() => {
-                                location.reload(); // Reload page after deletion
+                                if (response.data.status == true) {
+                                    $('.yajra-datatable').DataTable().ajax.reload();
+                                }
                             });
                         })
                         .catch((error) => {
@@ -155,7 +163,6 @@ airpos_validation = {
 				
                 airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
                     toggleLoader(false)
-                    console.log(response.data)
                     if(response.data.status == true){
                         airpos_app.notifyWithToastr('success', response.data.message, 'Invalid credentials')
                         window.location.href = response.data.data.redirect;
@@ -405,6 +412,38 @@ airpos_validation = {
 				},
 				limit: {
 					required: "Please add valid limit."
+				},
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+
+		$('#saveCategoryForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              error.insertAfter(element);
+            },
+			rules: {
+				category_name: {
+					required: true,
+				},
+			},
+			messages: {
+				category_name: {
+					required: "Please add valid category name."
 				},
 			},
 			submitHandler: function (form) {
