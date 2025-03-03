@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\AccountsController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Middleware\Google2FA;
@@ -45,7 +46,11 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
         });
 
         Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
-            
+            Route::get('/', [AccountsController::class, 'index'])->name('list');
+            Route::get('/create', [AccountsController::class, 'create'])->name('create');
+            Route::post('/save', [AccountsController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [AccountsController::class, 'edit'])->name('edit');
+            Route::get('/delete/{id}', [AccountsController::class, 'edit'])->name('delete');
         });
     });
 });

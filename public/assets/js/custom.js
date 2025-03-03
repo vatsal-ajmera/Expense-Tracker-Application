@@ -74,6 +74,47 @@ airpos_app = {
             }
         }
     },
+
+    deleteItem: function (selector) {
+        $(document).on("click", selector, function (e) {
+            e.preventDefault();
+
+            let deleteUrl = $(this).attr("href");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel",
+                buttonsStyling: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    airpos_app.ajaxRequest(deleteUrl, { _token: airpos_app.csrfToken() }, "DELETE")
+                        .then((response) => {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                confirmButtonClass: "btn btn-success",
+                            }).then(() => {
+                                location.reload(); // Reload page after deletion
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error!",
+                                text: "Something went wrong. Please try again.",
+                            });
+                        });
+                }
+            });
+        });
+    },
 };
 
 airpos_validation = {
@@ -194,6 +235,7 @@ airpos_validation = {
                 });
 			}
 		});
+
 		$('#resetPasswordForm').validate({
             errorClass: "border-danger",
             errorElement: "div", 
@@ -236,6 +278,7 @@ airpos_validation = {
                 });
 			}
 		});
+
 		$('#updateAvatarForm').validate({
             errorClass: "border-danger",
             errorElement: "div", 
@@ -267,6 +310,7 @@ airpos_validation = {
                 });
 			}
 		});
+
 		$('#updateProfileForm').validate({
             errorClass: "border-danger",
             errorElement: "div", 
@@ -311,6 +355,56 @@ airpos_validation = {
 				confirm_password: {
 					required: "Please confirm your password.",
                     equalTo: "Passwords do not match."
+				},
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+
+		$('#saveAccountForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+              error.addClass('invalid-feedback');
+              error.insertAfter(element);
+            },
+			rules: {
+				name: {
+					required: true,
+				},
+				number: {
+					required: true,
+				},
+				type: {
+					required: true,
+				},
+				limit: {
+					required: true,
+				}
+			},
+			messages: {
+				name: {
+					required: "Please add valid name."
+				},
+				number: {
+					required: "Please add valid Account Number."
+				},
+				type: {
+					required: "Select Valid type."
+				},
+				limit: {
+					required: "Please add valid limit."
 				},
 			},
 			submitHandler: function (form) {

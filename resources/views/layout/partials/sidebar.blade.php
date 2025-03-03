@@ -20,7 +20,7 @@
                             <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Accounts</span><span
                                     class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="generalsettings.html">Bank Accounts</a></li>
+                                <li><a href="{{ Route('accounts.list') }}">Bank Accounts</a></li>
                                 <li><a href="generalsettings.html">Credit Cards</a></li>
                                 <li><a href="generalsettings.html">Debit Cards</a></li>
                             </ul>
