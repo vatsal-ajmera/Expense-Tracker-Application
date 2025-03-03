@@ -31,7 +31,7 @@
                         <li class="submenu">
                             <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Expense</span><span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="{{ Route('category.list') }}">Expenses</a></li>
+                                <li><a href="{{ Route('expense.list') }}">Expenses</a></li>
                                 <li><a href="{{ Route('category.list') }}">Expense Category</a></li>
                             </ul>
                         </li>
