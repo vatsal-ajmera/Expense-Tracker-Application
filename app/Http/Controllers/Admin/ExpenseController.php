@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -53,8 +55,10 @@ class ExpenseController extends Controller
             'title' => 'Expense',
             'description' => 'Create Expense',
             'keywords' => 'Create Expense',
-        ];        
-        return view('expense.save',['meta_data' => $meta_data]);
+        ];
+        $accounts = Account::all();
+        $categories = ExpenseCategory::all();
+        return view('expense.save',['meta_data' => $meta_data, 'accounts' => $accounts, 'categories' => $categories ]);
     }
     
     public function save(Request $request){

@@ -17,16 +17,16 @@
 			</div>
 		</div>
 		<div class="card">
-			<form method="post" id='saveCategoryForm' action="{{ Route('category.save')}}">
+			<form method="post" id='saveExpensesForm' action="{{ Route('expense.save')}}">
+				@csrf
 				<div class="card-body">
 					<div class="row align-items-end">
-						
 						<div class="col-lg-3 col-sm-6 col-12">
 							<div class="form-group">
 								<label>Expense Date</label>
 								<div class="d-flex align-items-center">
 									<div class="input-groupicon flex-grow-1">
-										<input type="text" placeholder="Choose Date" class="datetimepicker form-control">
+										<input type="text" placeholder="Choose Date" class="datetimepicker form-control" name="expense_date">
 										<a class="addonset">
 											<img src="{{ URL::asset('/assets/img/icons/calendars.svg')}}" alt="img">
 										</a>
@@ -35,83 +35,126 @@
 							</div>
 						</div>
 				
-						<div class="col-lg-6 col-sm-6 col-12"></div>
-				
-						<div class="col-lg-3 col-sm-6 col-12 d-flex align-items-end justify-content-end">
-							<button class="btn btn-primary h-100 px-3">Add Row</button>
+						<div class="col-lg-9 col-sm-6 col-12 d-flex align-items-end justify-content-end">
+							<div class="d-flex justify-content-end">
+								<button class="btn btn-primary px-3 me-2 add_expense">Add Row</button>
+								<button class="btn btn-primary" id="submit_form" type="submit">save</button>
+								<button class="btn btn-primary" type="button" id="loaderBtn" disabled style="display: none">
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+									Loading...
+								</button>
+							</div>
 						</div>
 					</div>
-				
-					<!-- Table Section -->
-					<div class="row mt-3">
-						<div class="table-responsive mb-3">
-							<table class="table">
-								<thead>
-									<tr>
-										<th>#</th>
-										<th>Account Type</th>
-										<th>Expense Note</th>
-										<th>Category</th>
-										<th>Amount</th>
-										<th>Status</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody id="expenseTableBody">
-									<tr id="row_1">
-										<td>1</td>
-										<td>
-											<div class="form-group form-group-margin0">
-												<select class="select">
-													<option>Choose Account</option>
-													<option>Account Name</option>
-												</select>
-											</div>
-										</td>
-										<td>
-											<div class="form-group form-group-margin0">
-												<input type="text" placeholder="Expense Note">
-											</div>
-										</td>
-										<td>
-											<div class="form-group form-group-margin0">
-												<select class="select">
-													<option>Choose Category</option>
-													<option>Category Name</option>
-												</select>
-											</div>
-										</td>
-										<td>
-											<div class="form-group form-group-margin0">
-												<input type="text" placeholder="Amount here">
-											</div>
-										</td>
-										<td>
-											<div class="form-group form-group-margin0">
-												<select class="select">
-													<option>Paid</option>
-													<option>Unpaid</option>
-												</select>
-											</div>
-										</td>
-										<td>
-											<a href="javascript:void(0);" class="delete-set">
-												<img src="{{ URL::asset('/assets/img/icons/delete.svg')}}" alt="svg">
-											</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+					
+						<div class="row mt-3">
+							<div class="table-responsive mb-3">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Account Type</th>
+											<th>Expense Note</th>
+											<th>Category</th>
+											<th>Amount</th>
+											<th>Status</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody id="expenseTableBody">
+										<tr id="row_1">
+											<td>1</td>
+											<td>
+												<div class="form-group form-group-margin0">
+													<select class="select" name="account_name[]">
+														<option>Choose Account</option>
+														@foreach ($accounts as $key => $account)
+															<option value="{{ $account->id }}">{{ $account->name }}</option>
+														@endforeach
+													</select>
+												</div>
+											</td>
+											<td>
+												<div class="form-group form-group-margin0">
+													<input type="text" placeholder="Expense Note" name="expense_note[]">
+												</div>
+											</td>
+											<td>
+												<div class="form-group form-group-margin0">
+													<select class="select" name="expense_category[]">
+														<option>Choose Category</option>
+														@foreach ($categories as $category)
+															<option value="{{ $category->id }}">{{ $category->category_name }}</option>
+														@endforeach
+													</select>
+												</div>
+											</td>
+											<td>
+												<div class="form-group form-group-margin0">
+													<input type="text" placeholder="Amount here" name="amount[]">
+												</div>
+											</td>
+											<td>
+												<div class="form-group form-group-margin0">
+													<select class="select" name="status[]">
+														<option value="1">Paid</option>
+														<option value="2">Unpaid</option>
+													</select>
+												</div>
+											</td>
+											<td>
+												<a href="javascript:void(0);" class="delete_expense">
+													<img src="{{ deleteIcon() }}" alt="svg">
+												</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</div>
-				</div>				
-				
-			</form>
+					
+				</div>	
+			</form>			
 		</div>
 	</div>
 </div>
 @endsection
 
 @section('page-js')
+	<script>
+		$(document).on("click", ".add_expense", function (e) {
+            e.preventDefault();
+			let lastRow = $("#expenseTableBody tr:last");
+			let newRow = lastRow.clone();
+			let rowCount = $("#expenseTableBody tr").length + 1;
 
+			newRow.attr("id", "row_" + rowCount);
+			newRow.find("td:first").text(rowCount);
+			newRow.find("input").val("");
+			newRow.find("select").val(null).trigger("change");
+			newRow.find("select").each(function () {
+				let $this = $(this);
+				$this.val($this.find("option:first").val()).trigger("change");
+				$this.removeAttr('data-select2-id');
+				$this.next(".select2-container").remove();
+				$this.select2();
+			});
+			$("#expenseTableBody").append(newRow);
+    	});
+
+        $(document).on("click", ".delete_expense", function () {
+            if ($("#expenseTableBody tr").length > 1) {
+                $(this).closest("tr").remove();
+                updateRowNumbers();
+            }
+        });
+
+        function updateRowNumbers() {
+            $("#expenseTableBody tr").each(function (index) {
+                $(this).attr("id", "row_" + (index + 1));
+                $(this).find("td:first").text(index + 1);
+            });
+        }
+	</script>
+	
 @endsection

@@ -24,10 +24,10 @@
 
 						<div class="col-lg-12">
 							<button class="btn btn-submit me-2" id="submit_form" type="submit">save</button>
-                                <button class="btn btn-submit me-2" type="button" id="loaderBtn" disabled style="display: none">
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                    Loading...
-                                </button>
+							<button class="btn btn-submit me-2" type="button" id="loaderBtn" disabled style="display: none">
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								Loading...
+							</button>
 						</div>
 					</div>
 				</div>
