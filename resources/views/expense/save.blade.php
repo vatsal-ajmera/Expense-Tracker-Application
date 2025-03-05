@@ -66,8 +66,8 @@
 											<td>1</td>
 											<td>
 												<div class="form-group form-group-margin0">
-													<select class="select" name="account_name[]">
-														<option>Choose Account</option>
+													<select class="form-select expense_account_group" name="account_name[]">
+														<option value="">Choose Account</option>
 														@foreach ($accounts as $key => $account)
 															<option value="{{ $account->id }}">{{ $account->name }}</option>
 														@endforeach
@@ -81,8 +81,8 @@
 											</td>
 											<td>
 												<div class="form-group form-group-margin0">
-													<select class="select" name="expense_category[]">
-														<option>Choose Category</option>
+													<select class="form-select expense_category_group" name="expense_category[]">
+														<option value="">Choose Category</option>
 														@foreach ($categories as $category)
 															<option value="{{ $category->id }}">{{ $category->category_name }}</option>
 														@endforeach
@@ -96,7 +96,7 @@
 											</td>
 											<td>
 												<div class="form-group form-group-margin0">
-													<select class="select" name="status[]">
+													<select class="form-select" name="status[]">
 														<option value="1">Paid</option>
 														<option value="2">Unpaid</option>
 													</select>
@@ -131,14 +131,7 @@
 			newRow.attr("id", "row_" + rowCount);
 			newRow.find("td:first").text(rowCount);
 			newRow.find("input").val("");
-			newRow.find("select").val(null).trigger("change");
-			newRow.find("select").each(function () {
-				let $this = $(this);
-				$this.val($this.find("option:first").val()).trigger("change");
-				$this.removeAttr('data-select2-id');
-				$this.next(".select2-container").remove();
-				$this.select2();
-			});
+			newRow.find("form-select").val(null).trigger("change");
 			$("#expenseTableBody").append(newRow);
     	});
 

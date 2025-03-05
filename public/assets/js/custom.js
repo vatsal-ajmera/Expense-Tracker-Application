@@ -465,20 +465,61 @@ airpos_validation = {
             errorClass: "border-danger",
             errorElement: "div", 
             errorPlacement: function(error, element) {
-              error.addClass('invalid-feedback');
-              error.insertAfter(element);
+                element.addClass("border-danger")
             },
 			rules: {
-				category_name: {
+				"account_name[]": {
+					required: true,
+				},
+				"expense_note[]": {
+					required: true,
+				},
+				"amount[]": {
+					required: true,
+				},
+				"expense_category[]": {
 					required: true,
 				},
 			},
 			messages: {
-				category_name: {
-					required: "Please add valid category name."
+				"account_name[]": {
+					required: "Select Any Account."
+				},
+				"expense_note[]": {
+					required: "Enter Any Expense Note."
+				},
+				"amount[]": {
+					required: "Enter Any Expense Note."
+				},
+				"expense_category[]": {
+					required: "Select Any Category."
 				},
 			},
 			submitHandler: function (form) {
+                let isValid = true 
+                $(".expense_account_group").each(function (index) {
+					var field = $(this);
+					if(!field.val()){
+                        field.addClass("border-danger");
+                        isValid = false;
+                    }else{
+                        field.removeClass("border-danger");
+                    }
+                });
+                $(".expense_category_group").each(function (index) {
+					var field = $(this);
+					if(!field.val()){
+                        field.addClass("border-danger");
+                        isValid = false;
+                    }else{
+                        field.removeClass("border-danger");
+                    }
+                });
+                
+                if (!isValid) {
+                    return false
+                }
+
                 toggleLoader(true)
 
                 airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
@@ -502,7 +543,7 @@ function toggleLoader(showLoader) {
         $('#submit_form').hide();
     } else {
         $('#loaderBtn').hide();
-        $('#login').show();
+        $('#submit_form').show();
     }
 }
 
