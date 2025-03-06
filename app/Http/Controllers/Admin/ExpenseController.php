@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -37,6 +38,23 @@ class ExpenseController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('account_name', function($expense) {
+                    return $expense->account->name;
+                })
+                ->addColumn('category_name', function($expense) {
+                    return $expense->category->category_name;
+                })
+                ->addColumn('amount', function($expense) {
+                    return formateDate($expense->amount);
+                })
+                ->addColumn('expense_date', function($expense) {
+                    return formateDate($expense->expense_date);
+                })
+                ->addColumn('status', function($expense) {
+                    return $expense->status == Expense::STATUS_PAID
+                        ? '<span class="badges bg-lightgreen">Paid</span>'
+                        : '<span class="badges bg-lightred">Unpaid</span>';
+                }) 
                 ->addColumn('action', function($expense){
                     return '<a class="me-3" href="'.route('expense.edit', $expense->id).'">
                                 <img src="'.editIcon().'" alt="img">
@@ -45,7 +63,7 @@ class ExpenseController extends Controller
                                 <img src="'.deleteIcon() .'" alt="img">
                             </a>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
     }
@@ -53,30 +71,76 @@ class ExpenseController extends Controller
     public function create(){
         $meta_data = [
             'title' => 'Expense',
-            'description' => 'Create Expense',
-            'keywords' => 'Create Expense',
+            'description' => 'Add Expense',
+            'keywords' => 'Add Expense',
         ];
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
-        return view('expense.save',['meta_data' => $meta_data, 'accounts' => $accounts, 'categories' => $categories ]);
+        return view('expense.bulk_add',['meta_data' => $meta_data, 'accounts' => $accounts, 'categories' => $categories ]);
     }
     
     public function save(Request $request){
         $request->validate([
-            'text' => 'required',
+            'expense_date' => 'required',
+            'account_name' => 'required|array',
+            'expense_note' => 'required|array',
+            'amount' => 'required|array',
+            'expense_category' => 'required|array',
+            'status' => 'required|array',
+        ]);
+        $data = $request;
+        $save_array = [];
+        foreach ($data['account_name'] as $key => $value) {
+            $save_array[$key]['user_id'] = $this->auth_user->id;
+            $save_array[$key]['account_id'] = $value;
+            $save_array[$key]['category_type_id'] = $data['expense_category'][$key];
+            $save_array[$key]['text'] = $data['expense_note'][$key];
+            $save_array[$key]['amount'] = $data['amount'][$key];
+            $save_array[$key]['expense_date'] = Carbon::createFromFormat('d-m-Y', $data['expense_date'])->format('Y-m-d');
+            $save_array[$key]['status'] = $data['status'][$key];
+        }
+        $status = Expense::insert($save_array);
+        if ($status == TRUE) {
+            $data = ['redirect' => $this->redirect_after_login];
+            return $this->send_response($data, 'Expense saved successfully');
+        } else {
+            return $this->send_error_response($data, 'Someting failed', 500, []);
+        }
+        
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'edit_id' => 'required|exists:expenses,id',
+            'expense_date' => 'required',
+            'account_name' => 'required',
+            'expense_note' => 'required',
+            'amount' => 'required',
+            'expense_category' => 'required',
+            'status' => 'required',
         ]);
 
-        if (! empty($request->edit_id)) {
-            $category = Expense::find($request->edit_id);
-        } else {
-            $category = new Expense();
+        $expense_edit = Expense::find($request->edit_id);
+        $expense_edit->account_id = $request->account_name;
+        $expense_edit->category_type_id = $request->expense_category;
+        $expense_edit->text = $request->expense_note;
+        $expense_edit->description = $request->description ?? '';
+        $expense_edit->amount = $request->amount;
+        $expense_edit->status = $request->status;
+        $expense_edit->expense_date = Carbon::parse($request->expense_date) ?? $expense_edit->expense_date;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $timestamp = now()->timestamp;
+            $filename = $timestamp . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('uploads/expense', $filename, 'public');
+            $expense_edit->attachment = $filename;
         }
-        $category->text = $request->text;
-        $category->save();
+        $expense_edit->save();
         $data = [
             'redirect' => $this->redirect_after_login,
         ];
-        return $this->send_response($data, 'Expense saved successfully');
+        return $this->send_response($data, 'Expense Category saved successfully');
     }
 
     public function edit($id){
@@ -85,8 +149,16 @@ class ExpenseController extends Controller
             'description' => 'Edit Expense',
             'keywords' => 'Edit Expense',
         ];
-        $category = Expense::find($id);
-        return view('expense-category.save',['meta_data' => $meta_data, 'category' => $category]);
+        $expense = Expense::find($id);
+        $accounts = Account::all();
+        $categories = ExpenseCategory::all();
+        $response = [
+            'meta_data' => $meta_data, 
+            'expense' => $expense,
+            'accounts' => $accounts,
+            'categories' => $categories,
+        ];
+        return view('expense.save',$response);
     }
 
     public function delete($id){

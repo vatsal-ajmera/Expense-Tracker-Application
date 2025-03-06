@@ -1,12 +1,4 @@
 @extends('layout.mainlayout')
-@section('page-css')
-	<style>
-		.form-group-margin0{
-			margin-bottom: 0px !important;
-		}
-	</style>
-
-@endsection
 @section('content')
 <div class="page-wrapper">
 	<div class="content">
@@ -17,137 +9,152 @@
 			</div>
 		</div>
 		<div class="card">
-			<form method="post" id='saveExpensesForm' action="{{ Route('expense.save')}}">
-				@csrf
+			<form method="post" id='updateExpenseForm' action="{{ Route('expense.update')}}">
 				<div class="card-body">
-					<div class="row align-items-end">
-						<div class="col-lg-3 col-sm-6 col-12">
+					<div class="row">
+						@if (!empty($expense->id))
+							<input type="hidden" name="edit_id" value="{{ $expense->id }}">
+                        @endif
+
+						<div class="col-lg-6 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Account</label>
+								<select class="form-select" name="account_name">
+									<option value="">Choose account</option>
+									@foreach ($accounts as $account)
+										<option value="{{ $account->id }}" {{ ($account->id == $expense->account_id)? 'selected' : ''}}>{{ $account->name }}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-6 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Category</label>
+								<select class="form-select" name="expense_category">
+									<option value="">Choose Category</option>
+									@foreach ($categories as $category)
+										<option value="{{ $category->id }}" {{ ($expense->category_type_id == $category->id) ? "selected" : '' }}>{{ $category->category_name }}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Note</label>
+								<input type="text" name="expense_note" placeholder="Expense note here" value='{{ $expense->text ?? '' }}'>
+							</div>
+						</div>
+						<div class="col-lg-6 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Description</label>
+								<input type="text" name="expense_description" placeholder="Expense description here" value='{{ $expense->description ?? '' }}'>
+							</div>
+						</div>
+
+						<div class="col-lg-4 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Amount</label>
+								<input type="text" name="amount" placeholder="Expense amount here" value='{{ $expense->amount ?? '' }}'>
+							</div>
+						</div>
+						<div class="col-lg-4 col-sm-6 col-12">
 							<div class="form-group">
 								<label>Expense Date</label>
 								<div class="d-flex align-items-center">
 									<div class="input-groupicon flex-grow-1">
-										<input type="text" placeholder="Choose Date" class="datetimepicker form-control" name="expense_date">
+										<input type="text" placeholder="Choose Date" class="datetimepicker form-control"  name="expense_date" 
+											value="{{ old('expense_date', isset($expense) ? \Carbon\Carbon::parse($expense->expense_date)->format('d-m-Y') : '') }}">
 										<a class="addonset">
-											<img src="{{ URL::asset('/assets/img/icons/calendars.svg')}}" alt="img">
+											<img src="{{ calenderIcon() }}" alt="img">
 										</a>
 									</div>
 								</div>
 							</div>
 						</div>
-				
-						<div class="col-lg-9 col-sm-6 col-12 d-flex align-items-end justify-content-end">
-							<div class="d-flex justify-content-end">
-								<button class="btn btn-primary px-3 me-2 add_expense">Add Row</button>
-								<button class="btn btn-primary" id="submit_form" type="submit">save</button>
-								<button class="btn btn-primary" type="button" id="loaderBtn" disabled style="display: none">
-									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-									Loading...
-								</button>
+						<div class="col-lg-4 col-sm-6 col-12">
+							<div class="form-group">
+								<label>Expense Category</label>
+								<select class="form-select" name="status">
+									<option value="1" {{$expense->status == 1 ? 'selected' : ''}}>Paid</option>
+									<option value="2" {{$expense->status == 2 ? 'selected' : '' }}>Unpaid</option>
+								</select>
 							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Product Image</label>
+							<div class="image-upload">
+								<input type="file" id="fileInput" name="attachment" value="{{ $expense->attachment ?? '' }}">
+								<div class="image-uploads">
+									<img src="{{ URL::asset('assets/img/icons/upload.svg') }}" alt="img">
+									<h4>Drag and drop a file to upload</h4>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-12">
+							<div class="product-list">
+								<ul class="row" id="fileList">
+									@if ($expense->attachment)
+										<li>
+											<div class="productviews">
+												
+												<div class="productviewscontent">
+													<div class="productviewsname">
+														<h2>{{ $expense->attachment }}</h2>
+													</div>
+													<a href="javascript:void(0);" class="hideset">x</a>
+												</div>
+											</div>
+										</li>
+									@endif
+								</ul>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<button class="btn btn-submit me-2" id="submit_form" type="submit">save</button>
+							<a class="btn btn-cancel" href="{{ Route('expense.list') }}">Cancel</a>
+                                <button class="btn btn-submit me-2" type="button" id="loaderBtn" disabled style="display: none">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </button>
 						</div>
 					</div>
-					
-						<div class="row mt-3">
-							<div class="table-responsive mb-3">
-								<table class="table">
-									<thead>
-										<tr>
-											<th>#</th>
-											<th>Account Type</th>
-											<th>Expense Note</th>
-											<th>Category</th>
-											<th>Amount</th>
-											<th>Status</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody id="expenseTableBody">
-										<tr id="row_1">
-											<td>1</td>
-											<td>
-												<div class="form-group form-group-margin0">
-													<select class="form-select expense_account_group" name="account_name[]">
-														<option value="">Choose Account</option>
-														@foreach ($accounts as $key => $account)
-															<option value="{{ $account->id }}">{{ $account->name }}</option>
-														@endforeach
-													</select>
-												</div>
-											</td>
-											<td>
-												<div class="form-group form-group-margin0">
-													<input type="text" placeholder="Expense Note" name="expense_note[]">
-												</div>
-											</td>
-											<td>
-												<div class="form-group form-group-margin0">
-													<select class="form-select expense_category_group" name="expense_category[]">
-														<option value="">Choose Category</option>
-														@foreach ($categories as $category)
-															<option value="{{ $category->id }}">{{ $category->category_name }}</option>
-														@endforeach
-													</select>
-												</div>
-											</td>
-											<td>
-												<div class="form-group form-group-margin0">
-													<input type="text" placeholder="Amount here" name="amount[]">
-												</div>
-											</td>
-											<td>
-												<div class="form-group form-group-margin0">
-													<select class="form-select" name="status[]">
-														<option value="1">Paid</option>
-														<option value="2">Unpaid</option>
-													</select>
-												</div>
-											</td>
-											<td>
-												<a href="javascript:void(0);" class="delete_expense">
-													<img src="{{ deleteIcon() }}" alt="svg">
-												</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					
-				</div>	
-			</form>			
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
 @endsection
 
 @section('page-js')
-	<script>
-		$(document).on("click", ".add_expense", function (e) {
-            e.preventDefault();
-			let lastRow = $("#expenseTableBody tr:last");
-			let newRow = lastRow.clone();
-			let rowCount = $("#expenseTableBody tr").length + 1;
 
-			newRow.attr("id", "row_" + rowCount);
-			newRow.find("td:first").text(rowCount);
-			newRow.find("input").val("");
-			newRow.find("form-select").val(null).trigger("change");
-			$("#expenseTableBody").append(newRow);
-    	});
+<script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        let file = event.target.files[0];
+        if (file) {
+            let fileName = file.name;
 
-        $(document).on("click", ".delete_expense", function () {
-            if ($("#expenseTableBody tr").length > 1) {
-                $(this).closest("tr").remove();
-                updateRowNumbers();
-            }
-        });
-
-        function updateRowNumbers() {
-            $("#expenseTableBody tr").each(function (index) {
-                $(this).attr("id", "row_" + (index + 1));
-                $(this).find("td:first").text(index + 1);
-            });
+            let fileEntry = `
+                <li>
+                    <div class="productviews">
+                        <div class="productviewscontent">
+                            <div class="productviewsname">
+                                <h2>${fileName}</h2>
+                            </div>
+                        </div>
+                        <a href="javascript:void(0);" class="hideset" onclick="removeFile(this)">x</a>
+                    </div>
+                </li>
+            `;
+            document.getElementById('fileList').innerHTML = fileEntry;
         }
-	</script>
-	
+    });
+
+    function removeFile(element) {
+        element.closest('li').remove(); // Removes the clicked file entry
+    }
+</script>
+
 @endsection

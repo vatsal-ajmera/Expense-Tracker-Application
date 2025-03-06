@@ -81,8 +81,8 @@
 			},
 			lengthMenu: [10, 20, 50, 100],
 			columns: [
-				{ data: 'account_id', name: 'account_id', orderable: true },
-				{ data: 'category_type_id', name: 'category_type_id' },
+				{ data: 'account_name', name: 'account_name', orderable: true },
+				{ data: 'category_name', name: 'category_name' },
 				{ data: 'text', name: 'text', searchable: true },
 				{ data: 'amount', name: 'amount' },
 				{ data: 'expense_date', name: 'expense_date' },

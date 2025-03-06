@@ -11,3 +11,6 @@ function viewIcon() {
 function deleteIcon() {
     return URL::asset('/assets/img/icons/delete.svg');    
 }
+function calenderIcon() {
+    return URL::asset('/assets/img/icons/calendars.svg');    
+}

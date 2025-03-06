@@ -70,6 +70,7 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
             Route::get('/get-records', [ExpenseController::class, 'getRecords'])->name('get-records');
             Route::get('/create', [ExpenseController::class, 'create'])->name('create');
             Route::post('/save', [ExpenseController::class, 'save'])->name('save');
+            Route::post('/update', [ExpenseController::class, 'update'])->name('update');
             Route::get('/edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
             Route::delete('/delete/{id}', [ExpenseController::class, 'delete'])->name('delete');
         });

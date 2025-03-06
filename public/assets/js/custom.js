@@ -468,6 +468,9 @@ airpos_validation = {
                 element.addClass("border-danger")
             },
 			rules: {
+				"expense_date": {
+					required: true,
+				},
 				"account_name[]": {
 					required: true,
 				},
@@ -480,8 +483,14 @@ airpos_validation = {
 				"expense_category[]": {
 					required: true,
 				},
+				"status[]": {
+					required: true,
+				},
 			},
 			messages: {
+				"expense_date": {
+					required: "Select Expense Date."
+				},
 				"account_name[]": {
 					required: "Select Any Account."
 				},
@@ -492,6 +501,95 @@ airpos_validation = {
 					required: "Enter Any Expense Note."
 				},
 				"expense_category[]": {
+					required: "Select Any Category."
+				},
+				"status[]": {
+					required: "Select Any Category."
+				},
+			},
+			submitHandler: function (form) {
+                let isValid = true 
+                $(".expense_account_group").each(function (index) {
+					var field = $(this);
+					if(!field.val()){
+                        field.addClass("border-danger");
+                        isValid = false;
+                    }else{
+                        field.removeClass("border-danger");
+                    }
+                });
+                $(".expense_category_group").each(function (index) {
+					var field = $(this);
+					if(!field.val()){
+                        field.addClass("border-danger");
+                        isValid = false;
+                    }else{
+                        field.removeClass("border-danger");
+                    }
+                });
+                
+                if (!isValid) {
+                    return false
+                }
+
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+
+		$('#updateExpenseForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+			rules: {
+				"expense_date": {
+					required: true,
+				},
+				"account_name": {
+					required: true,
+				},
+				"expense_note": {
+					required: true,
+				},
+				"amount": {
+					required: true,
+				},
+				"expense_category": {
+					required: true,
+				},
+				"status": {
+					required: true,
+				},
+			},
+			messages: {
+				"expense_date": {
+					required: "Select Expense Date."
+				},
+				"account_name": {
+					required: "Select Any Account."
+				},
+				"expense_note": {
+					required: "Enter Any Expense Note."
+				},
+				"amount": {
+					required: "Enter Any Expense Note."
+				},
+				"expense_category": {
+					required: "Select Any Category."
+				},
+				"status": {
 					required: "Select Any Category."
 				},
 			},
