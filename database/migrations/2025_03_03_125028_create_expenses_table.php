@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreign('category_type_id')->references('id')->on('expense_categories')->onDelete('cascade');
             $table->string('text');
             $table->string('description')->nullable();
-            $table->decimal('amount', 10,5)->default(1);
+            $table->decimal('amount', 15,2)->default(1);
             $table->dateTime('expense_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('attachment')->nullable();
             $table->integer('status')->default(1);

@@ -22,5 +22,5 @@ function formateNumber($number) {
 }
 function formateDate($date) {
     $date = Carbon::parse($date);
-    return $date->isoFormat('D MMM YYYY');
+    return $date->format('d M Y');
 }

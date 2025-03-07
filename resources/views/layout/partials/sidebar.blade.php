@@ -21,6 +21,7 @@
                                     class="menu-arrow"></span></a>
                             <ul>
                                 <li><a href="{{ Route('accounts.list') }}">Bank Accounts</a></li>
+                                <li><a href="{{ Route('income.list') }}">Incomes</a></li>
                             </ul>
                         </li>
                     </ul>

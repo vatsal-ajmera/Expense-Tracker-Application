@@ -45,7 +45,7 @@ class ExpenseController extends Controller
                     return $expense->category->category_name;
                 })
                 ->addColumn('amount', function($expense) {
-                    return formateDate($expense->amount);
+                    return formateNumber($expense->amount);
                 })
                 ->addColumn('expense_date', function($expense) {
                     return formateDate($expense->expense_date);

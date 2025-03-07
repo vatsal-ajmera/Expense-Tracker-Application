@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseCategoryController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\IncomeController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\AccountsController;
@@ -73,6 +74,15 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
             Route::post('/update', [ExpenseController::class, 'update'])->name('update');
             Route::get('/edit/{id}', [ExpenseController::class, 'edit'])->name('edit');
             Route::delete('/delete/{id}', [ExpenseController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'income', 'as' => 'income.'], function () {
+            Route::get('/', [IncomeController::class, 'index'])->name('list');
+            Route::get('/get-records', [IncomeController::class, 'getRecords'])->name('get-records');
+            Route::get('/create', [IncomeController::class, 'create'])->name('create');
+            Route::post('/save', [IncomeController::class, 'save'])->name('save');
+            Route::get('/edit/{id}', [IncomeController::class, 'edit'])->name('edit');
+            Route::delete('/delete/{id}', [IncomeController::class, 'delete'])->name('delete');
         });
     });
 });

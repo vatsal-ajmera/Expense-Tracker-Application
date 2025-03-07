@@ -632,6 +632,56 @@ airpos_validation = {
 			}
 		});
 
+		$('#saveIncomeForm').validate({
+            errorClass: "border-danger",
+            errorElement: "div", 
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+			rules: {
+				"account_id": {
+					required: true,
+				},
+				"notes": {
+					required: true,
+				},
+				"date": {
+					required: true,
+				},
+				"amount": {
+					required: true,
+				},
+			},
+			messages: {
+				"account_id": {
+					required: "Select Account."
+				},
+				"notes": {
+					required: "Add Note."
+				},
+				"date": {
+					required: "Select date."
+				},
+				"amount": {
+					required: "Enter Any Expense Note."
+				},
+			},
+			submitHandler: function (form) {
+                toggleLoader(true)
+
+                airpos_app.ajaxRequest(form.action,form,form.method).then(response => {
+                    toggleLoader(false)
+                    if(response.data.status == true){
+                        window.location.href = response.data.data.redirect;
+                    }
+                }).catch(error => {
+                    toggleLoader(false)
+                    airpos_app.notifyWithToastr('error', error.response.data.message, 'Something went wrong.')
+                });
+			}
+		});
+
 	}
 };
 
