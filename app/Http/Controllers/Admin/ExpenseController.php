@@ -28,13 +28,30 @@ class ExpenseController extends Controller
         $this->auth_user = auth()->guard($this->gaurd)->user();
     }
     public function index(Request $request){
-        return view('expense.index',['meta_data' => $this->meta_data]);
+        $response_data = [
+            'meta_data' => $this->meta_data,
+            'accounts' => Account::all(),
+            'categories' => ExpenseCategory::all()
+        ];
+        return view('expense.index', $response_data);
     }
 
     public function getRecords(Request $request)
     {
         if ($request->ajax()) {
             $data = Expense::query();
+
+            if ($request->has('account_id') && !empty($request->account_id)) {
+                $data->where('account_id', $request->account_id);
+            }
+
+            if ($request->has('category_id') && !empty($request->category_id)) {
+                $data->where('category_type_id', $request->category_id);
+            }
+
+            if ($request->has('expense_date') && !empty($request->expense_date)) {
+                $data->whereBetween('expense_date', [$request->expense_date . ' 00:00:00', $request->expense_date. ' 11:59:59']);
+            }
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -76,7 +93,12 @@ class ExpenseController extends Controller
         ];
         $accounts = Account::all();
         $categories = ExpenseCategory::all();
-        return view('expense.bulk_add',['meta_data' => $meta_data, 'accounts' => $accounts, 'categories' => $categories ]);
+        $response_data = [
+            'meta_data' => $meta_data, 
+            'accounts' => $accounts, 
+            'categories' => $categories
+        ];
+        return view('expense.bulk_add', $response_data);
     }
     
     public function save(Request $request){

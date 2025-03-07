@@ -65,7 +65,6 @@
 				</div>
 				<!-- /Filter -->
 
-
 				<div class="table-responsive">
 					<table class="table yajra-datatable">
 						<thead>

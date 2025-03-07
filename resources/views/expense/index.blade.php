@@ -19,7 +19,10 @@
 				<div class="table-top">
 					<div class="search-set">
 						<div class="search-path">
-							
+							<a class="btn btn-filter" id="filter_search">
+								<img src="{{ asset('assets/img/icons/filter.svg') }}" alt="img">
+								<span><img src="{{ asset('assets/img/icons/closes.svg') }}" alt="img"></span>
+							</a>
 						</div>
 						<div class="search-input">
 							<a class="btn btn-searchset"><img src="{{ asset('assets/img/icons/search-white.svg') }}" alt="img"></a>
@@ -39,7 +42,45 @@
 						</ul>
 					</div>
 				</div>
-
+				<!-- /Filter -->
+				<div class="card mb-0" id="filter_inputs">
+					<div class="card-body pb-0">
+						<div class="row">
+							<div class="col-lg-4 col-sm-12">
+								<div class="row">
+									<div class="col-lg col-sm-6 col-12">
+										<div class="form-group">
+											<select class="select" id="account_id">
+												<option value="">Select Any Account</option>
+												@foreach ($accounts as $key => $account)
+													<option value="{{ $account->id }}">{{ $account->name }}</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-4 col-sm-12">
+								<div class="row">
+									<div class="col-lg col-sm-6 col-12">
+										<div class="form-group">
+											<select class="select" id="category_id">
+												<option value="">Select Any Type</option>
+												@foreach ($categories as $key => $category)
+													<option value="{{ $category->id }}">{{ $category->category_name }}</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-4 col-sm-12">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Filter -->
 				<div class="table-responsive">
 					<table class="table yajra-datatable">
 						<thead>
@@ -72,6 +113,10 @@
 			serverSide: true,
 			ajax: {
 				url: "{{ route('expense.get-records') }}",
+				data: function (d) {
+					d.account_id = $('#account_id').val();
+					d.category_id = $('#category_id').val();
+				},
 				beforeSend: function() {
 					$('#global-loader').show();
 				},
@@ -94,7 +139,13 @@
 				"<'row'<'col-sm-6'l><'col-sm-6'p>>",
 		});
 
-
+		$('#account_id').change(function () {
+			table.draw();
+		});
+		$('#category_id').change(function () {
+			table.draw();
+		});
+		
 		airpos_app.deleteItem(".confirm-text");
 	});
 
