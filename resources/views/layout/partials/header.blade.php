@@ -65,13 +65,13 @@
                 <i data-feather="maximize"></i>
             </a>
         </li>
-        <li class="nav-item nav-item-box">
+        {{-- <li class="nav-item nav-item-box">
             <a href="email.html">
                 <i data-feather="mail"></i>
                 <span class="badge rounded-pill">1</span>
             </a>
-        </li>
-        <!-- Notifications -->
+        </li> --}}
+        {{-- <!-- Notifications -->
         <li class="nav-item dropdown nav-item-box">
             <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                 <i data-feather="bell"></i><span class="badge rounded-pill">2</span>
@@ -171,11 +171,11 @@
                 </div>
             </div>
         </li>
-        <!-- /Notifications -->
+        <!-- /Notifications --> --}}
 
-        <li class="nav-item nav-item-box">
+        {{-- <li class="nav-item nav-item-box">
             <a href="generalsettings.html"><i data-feather="settings"></i></a>
-        </li>
+        </li> --}}
         <li class="nav-item dropdown has-arrow main-drop">
             <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
                 <span class="user-info">

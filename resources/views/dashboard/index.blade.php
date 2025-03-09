@@ -11,7 +11,7 @@
                                 <span><img src="{{ URL::asset('assets/img/icons/dash2.svg') }}" alt="img"></span>
                             </div>
                             <div class="dash-widgetcontent">
-                                <h5><span class="counters" data-count="20100.0">{{ $period_income }}</span></h5>
+                                <h5>₹ <span class="counters" data-count="{{ $period_income }}">{{ $period_income }}</span></h5>
                                 <h6>Total Period Income</h6>
                             </div>
                         </div>
@@ -22,7 +22,7 @@
                                 <span><img src="{{ URL::asset('assets/img/icons/dash1.svg') }}" alt="img"></span>
                             </div>
                             <div class="dash-widgetcontent">
-                                <h5><span class="counters" data-count="29000.0">{{ $period_expenses }}</span></h5>
+                                <h5>₹ <span class="counters" data-count="{{ $period_expenses }}">{{ $period_expenses }}</span></h5>
                                 <h6>Total Period Expenses</h6>
                             </div>
                         </div>
@@ -33,8 +33,8 @@
                                 <span><img src="{{ URL::asset('assets/img/icons/dash3.svg') }}" alt="img"></span>
                             </div>
                             <div class="dash-widgetcontent">
-                                <h5>$<span class="counters" data-count="20100.0">{{ $period_expenses }}</span></h5>
-                                <h6>Lowest Expense Category</h6>
+                                <h5>₹ <span class="counters" data-count="{{ $lowest_category_amount }}">{{ $lowest_category_amount }}</span></h5>
+                                <h6>{{ $lowest_category_name }}</h6>
                             </div>
                         </div>
                     </div>
@@ -44,8 +44,8 @@
                                 <span><img src="{{ URL::asset('assets/img/icons/dash4.svg') }}" alt="img"></span>
                             </div>
                             <div class="dash-widgetcontent">
-                                <h5>$<span class="counters" data-count="20100.00">400.00</span></h5>
-                                <h6>Higest Expense Category</h6>
+                                <h5>₹ <span class="counters" data-count="{{ $highest_category_amount }}">{{ $highest_category_amount }}</span></h5>
+                                <h6>{{ $highest_category_name }}</h6>
                             </div>
                         </div>
                     </div>
@@ -70,24 +70,15 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>1</td>
-												<td>Apple Earpods</td>
-												<td>category</td>
-												<td>$891.2</td>
-											</tr>
-											<tr>
-												<td>2</td>
-												<td>Apple Earpods</td>
-												<td>category</td>
-												<td>$891.2</td>
-											</tr>
-											<tr>
-												<td>3</td>
-												<td>Apple Earpods</td>
-												<td>category</td>
-												<td>$891.2</td>
-											</tr>
+                                            @foreach ($recent_transations as $key => $transaction)
+                                                <tr>
+                                                    <td>{{ $key+1 }}</td>
+                                                    <td>{{ $transaction->account->name }}</td>
+                                                    <td>{{ $transaction->category->category_name }}</td>
+                                                    <td>{{ $transaction->amount }}</td>
+                                                </tr>
+                                            @endforeach
+											
 										</tbody>
 									</table>
 								</div>
@@ -114,35 +105,63 @@
 
 @section('page-js')
     <script>
-        if($('#category_view').length > 0 ){
-    	var pieCtx = document.getElementById("category_view"),
-    	pieConfig = {
-    		// colors: ['#7638ff', '#ff737b', '#fda600', '#1ec1b0'],
-    		series: {!! $category_total !!},
-    		chart: {
-                    height: 350,
-                    type: 'donut',
-                    toolbar: {
-                    show: false,
+        if ($('#category_view').length > 0) {
+            var pieCtx = document.getElementById("category_view"),
+                pieConfig = {
+                    // colors: ['#7638ff', '#ff737b', '#fda600', '#1ec1b0'],
+                    series: {!! $category_total !!},
+                    chart: {
+                        height: 350,
+                        type: 'donut',
+                        toolbar: {
+                            show: false,
+                        }
+                    },
+                    labels: {!! $category_expenses !!},
+
+                    legend: { show: false },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
+                };
+            var pieChart = new ApexCharts(pieCtx, pieConfig);
+            pieChart.render();
+        }
+
+        $(".counters").each(function () {
+            var $this = $(this),
+                countTo = parseFloat($this.attr("data-count")); // Ensure it's treated as a float
+
+            $({ countNum: 0 }).animate(
+                {
+                    countNum: countTo,
+                },
+                {
+                    duration: 2000,
+                    easing: "linear",
+                    step: function () {
+                        $this.text(this.countNum.toLocaleString('en-US', { 
+                            minimumFractionDigits: 2, 
+                            maximumFractionDigits: 2 
+                        })); // Display with decimals
+                    },
+                    complete: function () {
+                        $this.text(countTo.toLocaleString('en-US', { 
+                            minimumFractionDigits: 2, 
+                            maximumFractionDigits: 2 
+                        }));
+                    },
                 }
-    		},
-    		labels: {!! $category_expenses !!},
-            
-    		legend: {show: false},
-    		responsive: [{
-    			breakpoint: 480,
-    			options: {
-    				chart: {
-    					width: 200
-    				},
-    				legend: {
-    					position: 'bottom'
-    				}
-    			}
-    		}]
-    	};
-    	var pieChart = new ApexCharts(pieCtx, pieConfig);
-    	pieChart.render();
-	}
+            );
+        });
+
     </script>
 @endsection

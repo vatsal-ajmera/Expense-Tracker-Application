@@ -10,6 +10,7 @@
 		</div>
 		<div class="card">
 			<form method="post" id='saveCategoryForm' action="{{ Route('category.save')}}">
+				@csrf
 				<div class="card-body">
 					<div class="row">
 						@if (!empty($category->id))
