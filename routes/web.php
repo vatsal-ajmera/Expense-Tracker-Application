@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\IncomeController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\AccountsController;
+use App\Http\Controllers\Admin\SpendAnalyticsController;
+use App\Http\Controllers\Admin\TransactionHistoryController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Middleware\Google2FA;
@@ -83,6 +85,16 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
             Route::post('/save', [IncomeController::class, 'save'])->name('save');
             Route::get('/edit/{id}', [IncomeController::class, 'edit'])->name('edit');
             Route::delete('/delete/{id}', [IncomeController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'analytics', 'as' => 'analytics.'], function () {
+            Route::get('/', [SpendAnalyticsController::class, 'index'])->name('spend_analytics');
+            Route::get('/transaction-history', [SpendAnalyticsController::class, 'index'])->name('spend_analytics');
+        });
+
+        Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function () {
+            Route::get('/history', [TransactionHistoryController::class, 'index'])->name('history');
+            Route::get('/get-records', [TransactionHistoryController::class, 'getRecords'])->name('get-records');
         });
     });
 });

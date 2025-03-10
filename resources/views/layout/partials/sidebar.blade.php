@@ -36,7 +36,8 @@
                 <li class="submenu-open">
                     <h6 class="submenu-hdr">Analytics</h6>								
                     <ul>
-                        <li><a href="{{ Route('dashboard') }}"><i data-feather="pie-chart"></i><span>Spend Analytics</span></a></li>
+                        <li><a href="{{ Route('analytics.spend_analytics') }}"><i data-feather="pie-chart"></i><span>Spend Analytics</span></a></li>
+                        <li><a href="{{ Route('transaction.history') }}"><i data-feather="shuffle"></i><span>Transaction history</span></a></li>
                     </ul>
                 </li>
             </ul>

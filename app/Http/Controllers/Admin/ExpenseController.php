@@ -39,7 +39,7 @@ class ExpenseController extends Controller
     public function getRecords(Request $request)
     {
         if ($request->ajax()) {
-            $data = Expense::query();
+            $data = Expense::orderBy('expense_date', 'desc');
 
             if ($request->has('account_id') && !empty($request->account_id)) {
                 $data->where('account_id', $request->account_id);

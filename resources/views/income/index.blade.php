@@ -12,8 +12,6 @@
 			</div>
 		</div>
 		
-
-		<!-- /product list -->
 		<div class="card">
 			<div class="card-body">
 				<div class="table-top">
@@ -57,7 +55,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- /product list -->
 	</div>
 </div>
 @endsection
