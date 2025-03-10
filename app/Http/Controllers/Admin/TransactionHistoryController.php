@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -39,65 +40,69 @@ class TransactionHistoryController extends Controller
     public function getRecords(Request $request)
     {
         if ($request->ajax()) {
-            $data = Expense::orderBy('expense_date', 'desc');
-
-            if ($request->has('account_id') && !empty($request->account_id)) {
-                $data->where('account_id', $request->account_id);
+            if (!empty($request->trans_type) && $request->trans_type == 'credit') {
+                $expenses = collect([]); // Empty collection instead of empty array
+            } else {
+                $expenses = Expense::orderBy('expense_date', 'desc');
+        
+                if ($request->has('account_id') && !empty($request->account_id)) {
+                    $expenses->where('account_id', $request->account_id);
+                }
+        
+                if ($request->has('category_id') && !empty($request->category_id)) {
+                    $expenses->where('category_type_id', $request->category_id);
+                }
+        
+                if ($request->has('date') && !empty($request->date)) {
+                    $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
+                    $expenses->where('expense_date', $parse_date);
+                }
+        
+                $expenses = $expenses->get()->map(function ($expense) {
+                    return [
+                        'text' => $expense->text,
+                        'account_name' => $expense->account->name,
+                        'category_name' => $expense->category->category_name,
+                        'amount' => formateNumber($expense->amount),
+                        'date' => Carbon::parse($expense->expense_date)->format('Y-m-d'),
+                        'type' => '<span class="badges bg-lightred">Debit</span>',
+                    ];
+                });
             }
-
-            if ($request->has('category_id') && !empty($request->category_id)) {
-                $data->where('category_type_id', $request->category_id);
+        
+            // Handle incomes
+            if (($request->has('category_id') && !empty($request->category_id)) || (!empty($request->trans_type) && $request->trans_type == 'debit')) {
+                $incomes = collect([]); // Empty collection instead of empty array
+            } else {
+                $incomes = Income::orderBy('date', 'desc');
+        
+                if ($request->has('account_id') && !empty($request->account_id)) {
+                    $incomes->where('account_id', $request->account_id);
+                }
+        
+                if ($request->has('date') && !empty($request->date)) {
+                    $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
+                    $incomes->where('date', $parse_date);
+                }
+        
+                $incomes = $incomes->get()->map(function ($income) {
+                    return [
+                        'text' => $income->notes,
+                        'account_name' => $income->account->name,
+                        'category_name' => 'Credit',
+                        'amount' => formateNumber($income->amount),
+                        'date' => Carbon::parse($income->date)->format('Y-m-d'),
+                        'type' => '<span class="badges bg-lightgreen">Credit</span>',
+                    ];
+                });
             }
-
-            if ($request->has('expense_date') && !empty($request->expense_date)) {
-                $parse_date = Carbon::parse($request->expense_date)->format('Y-m-d H:i:s');
-                $data->where('expense_date', $parse_date);
-            }
-
-            return DataTables::of($data)
+        
+            // Merge collections and sort by date
+            $mergedData = $expenses->merge($incomes)->sortByDesc('date');
+        
+            return DataTables::of($mergedData)
                 ->addIndexColumn()
-
-                ->addColumn('account_name', function ($expense) {
-                    return $expense->account->name;
-                })
-                ->filterColumn('account_name', function ($query, $keyword) {
-                    $query->whereHas('account', function ($q) use ($keyword) {
-                        $q->where('name', 'LIKE', "%{$keyword}%");
-                    });
-                })
-
-                ->addColumn('category_name', function ($expense) {
-                    return $expense->category->category_name;
-                })
-                ->filterColumn('category_name', function ($query, $keyword) {
-                    $query->whereHas('category', function ($q) use ($keyword) {
-                        $q->where('category_name', $keyword);
-                    });
-                })
-
-                ->addColumn('amount', function ($expense) {
-                    return formateNumber($expense->amount);
-                })
-                ->filterColumn('amount', function ($query, $keyword) {
-                    $query->where('amount', $keyword);
-                })
-
-                
-                ->addColumn('status', function ($expense) {
-                    return $expense->status == Expense::STATUS_PAID
-                        ? '<span class="badges bg-lightgreen">Paid</span>'
-                        : '<span class="badges bg-lightred">Unpaid</span>';
-                })
-
-                ->addColumn('action', function ($expense) {
-                    return '<a class="me-3" href="'.route('expense.edit', $expense->id).'">
-                                <img src="'.editIcon().'" alt="img">
-                            </a>
-                            <a class="confirm-text" href="'.route('expense.delete', $expense->id).'">
-                                <img src="'.deleteIcon().'" alt="img">
-                            </a>';
-                })
-                ->rawColumns(['action', 'status'])
+                ->rawColumns(['type'])
                 ->make(TRUE);
         }
     }

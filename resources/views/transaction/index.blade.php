@@ -43,7 +43,7 @@
                                 <div class="card mb-0" id="filter_inputs">
                                     <div class="card-body pb-0">
                                         <div class="row">
-                                            <div class="col-lg-4 col-sm-12">
+                                            <div class="col-lg-3 col-sm-12">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
@@ -57,7 +57,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4 col-sm-12">
+                                            <div class="col-lg-3 col-sm-12">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
@@ -71,18 +71,31 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4 col-sm-12">
+                                            <div class="col-lg-3 col-sm-12">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
                                                             <div class="d-flex align-items-center">
                                                                 <div class="input-groupicon flex-grow-1">
-                                                                    <input type="text" placeholder="Choose Date" class="datetimepicker form-control" id="expense_date" name="expense_date">
+                                                                    <input type="text" placeholder="Choose Date" class="datetimepicker form-control" id="date" name="date">
                                                                     <a class="addonset">
                                                                         <img src="{{ calenderIcon() }}" alt="img">
                                                                     </a>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-lg col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <select class="select" id="trans_type">
+                                                                <option value="">Select Any One</option>
+                                                                <option value="credit">Credit</option>
+                                                                <option value="debit">Debit</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -102,7 +115,7 @@
                                                 <th>Category</th>
                                                 <th>Amount</th>
                                                 <th>Expense date</th>
-                                                <th>Status</th>
+                                                <th>Trans Type</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -135,7 +148,8 @@
                     data: function (d) {
                         d.account_id = $('#account_id').val();
                         d.category_id = $('#category_id').val();
-                        d.expense_date = $('#expense_date').val();
+                        d.trans_type = $('#trans_type').val();
+                        d.date = $('#date').val();
                     },
                     beforeSend: function() {
                         $('#global-loader').show();
@@ -153,8 +167,8 @@
                     { data: 'account_name', name: 'account_name', orderable: true, searchable: true },
                     { data: 'category_name', name: 'category_name', searchable: true},
                     { data: 'amount', name: 'amount', searchable: true},
-                    { data: 'expense_date', name: 'expense_date', searchable: true },
-                    { data: 'status', name: 'status', searchable: true },
+                    { data: 'date', name: 'date', searchable: true },
+                    { data: 'type', name: 'type', searchable: true },
                 ],
                 dom: "<'row'<'col-sm-6'><'col-sm-6'f>>" +
                 "<'table-responsive'tr>" +
@@ -167,14 +181,17 @@
             $('#category_id').change(function () {
                 table.draw();
             });
-            $('#expense_date').on('dp.hide', function(e) {  
+            $('#trans_type').change(function () {
+                table.draw();
+            });
+            $('#date').on('dp.hide', function(e) {  
                 table.draw();
             });
 
             $('#refresh_search').click(function () {
                 let table = $('.yajra-datatable').DataTable();
                 table.search('').columns().search('')
-                $('#expense_date').val('');
+                $('#date').val('');
                 $('input[type="text"], select').val('');
                 $('input, select').trigger('change'); 
 
