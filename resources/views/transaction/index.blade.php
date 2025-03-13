@@ -1,4 +1,38 @@
 @extends('layout.mainlayout')
+@section('page-css')
+
+    <style>
+        .shimmer {
+            background: linear-gradient(90deg, #f6f7f8 25%, #edeef1 50%, #f6f7f8 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+            color: transparent; /* Hide text */
+            border-radius: 5px;
+            display: flex; /* Keep layout intact */
+            align-items: center; /* Center shimmer */
+            justify-content: center;
+            min-height: 50px; /* Set a fixed height */
+            width: 100%;
+        }
+
+        /* Prevent height increase */
+        .shimmer h5, .shimmer h6 {
+            visibility: hidden; /* Hide text instead of removing it */
+        }
+        .shimmer .dash-widgetimg {
+            display: none; /* Hide the icon section */
+        }
+
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+
+
+    </style>
+@endsection
 @section('content')
 <div class="page-wrapper">
 	<div class="content">
@@ -11,7 +45,7 @@
 
         <div class="row">
             <div class="col-lg-6 col-sm-6 col-12">
-                <div class="dash-widget">
+                <div class="dash-widget amount_section">
                     <div class="dash-widgetimg">
                         <span><img src="{{ URL::asset('assets/img/icons/dash1.svg') }}" alt="img"></span>
                     </div>
@@ -22,12 +56,12 @@
                 </div>
             </div>
             <div class="col-lg-6 col-sm-6 col-12">
-                <div class="dash-widget dash1">
+                <div class="dash-widget dash1 amount_section">
                     <div class="dash-widgetimg">
                         <span><img src="{{ URL::asset('assets/img/icons/dash2.svg') }}" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>₹<span class="counters" data-count="0.00">₹0.00</span></h5>
+                        <h5>₹<span class="counters" data-count="0.00">₹ 0.00</span></h5>
                         <h6>Gross Credits</h6>
                     </div>
                 </div>
@@ -178,13 +212,16 @@
                     },
                     beforeSend: function() {
                         $('#global-loader').show();
+                        $('.amount_section').addClass('shimmer')
                     },
                     complete: function() {
                         $('#global-loader').hide();
                     },
                     dataSrc: function(json) {
-                        // Update Gross Debits and Gross Credits on load
-                        updateSummaryBoxes(json.gross_debits, json.gross_credits);
+                        setTimeout(() => {
+                            updateSummaryBoxes(json.gross_debits, json.gross_credits);
+                            $('.amount_section').removeClass('shimmer')
+                        }, 5000);
                         return json.data;
                     }
                 },
@@ -250,8 +287,8 @@
             });
 
             function updateSummaryBoxes(debits, credits) {
-                $('.dash-widgetcontent .counters[data-count]:first').text(`${debits.toLocaleString()}`);
-                $('.dash-widgetcontent .counters[data-count]:last').text(`${credits.toLocaleString()}`);
+                $('.dash-widgetcontent .counters[data-count]:first').text(`${debits}`);
+                $('.dash-widgetcontent .counters[data-count]:last').text(`${credits}`);
             }
 
 	    });    
