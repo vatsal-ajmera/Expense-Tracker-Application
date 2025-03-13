@@ -8,6 +8,31 @@
 				<h6>{{ $meta_data['description'] }}</h6>
 			</div>
 		</div>
+
+        <div class="row">
+            <div class="col-lg-6 col-sm-6 col-12">
+                <div class="dash-widget">
+                    <div class="dash-widgetimg">
+                        <span><img src="{{ URL::asset('assets/img/icons/dash1.svg') }}" alt="img"></span>
+                    </div>
+                    <div class="dash-widgetcontent">
+                        <h5>₹<span class="counters" data-count="0.00">₹ 0.00</span></h5>
+                        <h6>Gross Debits</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-12">
+                <div class="dash-widget dash1">
+                    <div class="dash-widgetimg">
+                        <span><img src="{{ URL::asset('assets/img/icons/dash2.svg') }}" alt="img"></span>
+                    </div>
+                    <div class="dash-widgetcontent">
+                        <h5>₹<span class="counters" data-count="0.00">₹0.00</span></h5>
+                        <h6>Gross Credits</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
 		
 
 		<div class="card">
@@ -156,12 +181,17 @@
                     },
                     complete: function() {
                         $('#global-loader').hide();
+                    },
+                    dataSrc: function(json) {
+                        // Update Gross Debits and Gross Credits on load
+                        updateSummaryBoxes(json.gross_debits, json.gross_credits);
+                        return json.data;
                     }
                 },
                 search: {
                     regex: true
                 },
-                lengthMenu: [10, 20, 50, 100],
+                lengthMenu: [100, 500, 1000, 2000],
                 columns: [
                     { data: 'text', name: 'text', searchable: true },
                     { data: 'account_name', name: 'account_name', orderable: true, searchable: true },
@@ -170,6 +200,27 @@
                     { data: 'date', name: 'date', searchable: true },
                     { data: 'type', name: 'type', searchable: true },
                 ],
+                drawCallback: function(settings) {
+                    let api = this.api();
+
+                    // Calculate Gross Debits and Gross Credits on the current page
+                    let pageDebits = api
+                        .rows({ page: 'current' })
+                        .data()
+                        .filter(row => row.type.includes('Debit'))
+                        .pluck('amount')
+                        .reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+
+                    let pageCredits = api
+                        .rows({ page: 'current' })
+                        .data()
+                        .filter(row => row.type.includes('Credit'))
+                        .pluck('amount')
+                        .reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+
+                    // Update the summary boxes dynamically
+                    updateSummaryBoxes(pageDebits, pageCredits);
+                },
                 dom: "<'row'<'col-sm-6'><'col-sm-6'f>>" +
                 "<'table-responsive'tr>" +
                 "<'row'<'col-sm-6'l><'col-sm-6'p>>",
@@ -198,7 +249,10 @@
                 table.draw();
             });
 
-
+            function updateSummaryBoxes(debits, credits) {
+                $('.dash-widgetcontent .counters[data-count]:first').text(`${debits.toLocaleString()}`);
+                $('.dash-widgetcontent .counters[data-count]:last').text(`${credits.toLocaleString()}`);
+            }
 
 	    });    
     </script>

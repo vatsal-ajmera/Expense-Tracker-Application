@@ -40,8 +40,11 @@ class TransactionHistoryController extends Controller
     public function getRecords(Request $request)
     {
         if ($request->ajax()) {
+            $gross_debits = 0;
+            $gross_credits = 0;
+
             if (!empty($request->trans_type) && $request->trans_type == 'credit') {
-                $expenses = collect([]); // Empty collection instead of empty array
+                $expenses = collect([]);
             } else {
                 $expenses = Expense::orderBy('expense_date', 'desc');
         
@@ -57,6 +60,7 @@ class TransactionHistoryController extends Controller
                     $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
                     $expenses->where('expense_date', $parse_date);
                 }
+                $gross_debits = $expenses->sum('amount');
         
                 $expenses = $expenses->get()->map(function ($expense) {
                     return [
@@ -84,6 +88,7 @@ class TransactionHistoryController extends Controller
                     $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
                     $incomes->where('date', $parse_date);
                 }
+                $gross_credits = $incomes->sum('amount');
         
                 $incomes = $incomes->get()->map(function ($income) {
                     return [
@@ -103,6 +108,10 @@ class TransactionHistoryController extends Controller
             return DataTables::of($mergedData)
                 ->addIndexColumn()
                 ->rawColumns(['type'])
+                ->with([
+                    'gross_debits' => $gross_debits,
+                    'gross_credits' => $gross_credits,
+                ])
                 ->make(TRUE);
         }
     }
