@@ -89,7 +89,6 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
 
         Route::group(['prefix' => 'analytics', 'as' => 'analytics.'], function () {
             Route::get('/', [SpendAnalyticsController::class, 'index'])->name('spend_analytics');
-            Route::get('/transaction-history', [SpendAnalyticsController::class, 'index'])->name('spend_analytics');
         });
 
         Route::group(['prefix' => 'transaction', 'as' => 'transaction.'], function () {
