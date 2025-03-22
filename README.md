@@ -18,6 +18,9 @@ Profile update
 
 Two-Step Authentication using Google Authenticator
 
+👉 **To enable authenticator verification, simply enable the two_fa_verification key from the users table.**
+
+
 💰 Expense Management
 
 Manage expense categories
