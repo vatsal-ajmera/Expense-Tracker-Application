@@ -13,23 +13,31 @@
                     </ul>
                 </li>
                 <li class="submenu-open">
-                    <h6 class="submenu-hdr">Expense & Accounts</h6>								
+                    <h6 class="submenu-hdr">Expense & Accounts</h6>	
                     <ul>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><i data-feather="file-text"></i><span>Expense</span><span class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="{{ Route('expense.list') }}">Expenses</a></li>
-                                <li><a href="{{ Route('category.list') }}">Expense Category</a></li>
-                            </ul>
+                        <li>
+                            <a href="{{ Route('accounts.list') }}">
+                                <img src="{{ url('assets/img/icons/wallet1.svg') }}" alt="img" class="me-1">
+                                <span>Bank Accounts</span>
+                            </a>
                         </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0);"><i data-feather="user-check"></i><span>Accounts</span><span
-                                    class="menu-arrow"></span></a>
-                            <ul>
-                                <li><a href="{{ Route('accounts.list') }}">Bank Accounts</a></li>
-                                <li><a href="{{ Route('income.list') }}">Incomes</a></li>
-                            </ul>
+                        <li>
+                            <a href="{{ Route('category.list') }}">
+                                <i data-feather="copy"></i><span>Expense Category</span>
+                            </a>
                         </li>
+                        <li>
+                            <a href="{{ Route('income.list') }}">
+                                <i data-feather="download-cloud"></i><span>Incomes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ Route('expense.list') }}">
+                                <i data-feather="external-link"></i><span>Expense</span>
+                            </a>
+                        </li>
+                        
+                        
                     </ul>
                 </li>
 
@@ -38,6 +46,15 @@
                     <ul>
                         <li><a href="{{ Route('analytics.spend_analytics') }}"><i data-feather="pie-chart"></i><span>Spend Analytics</span></a></li>
                         <li><a href="{{ Route('transaction.history') }}"><i data-feather="shuffle"></i><span>Transaction history</span></a></li>
+                    </ul>
+                </li>
+                
+                <li class="submenu-open">
+                    <h6 class="submenu-hdr">Settings</h6>								
+                    <ul>
+                        <li>
+                            <a href="{{ route('logout') }}"><i data-feather="log-out"></i><span>Logout</span> </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
