@@ -37,16 +37,16 @@ class DashboardController extends Controller
         ->whereBetween('expense_date', [$start_of_month, $end_of_month])
         ->groupBy('category_type_id')
         ->orderBy('total_amount', 'asc')
-        ->first()
-        ->toArray();
+        ->first();
+        $lowest_category = $lowest_category ? $lowest_category->toArray() : [];
 
         $highest_category = Expense::with(['category:id,category_name'])
         ->select('category_type_id', DB::raw('SUM(amount) as total_amount'))
         ->whereBetween('expense_date', [$start_of_month, $end_of_month])
         ->groupBy('category_type_id')
         ->orderBy('total_amount', 'desc')
-        ->first()
-        ->toArray();
+        ->first();
+        $highest_category = $highest_category ? $highest_category->toArray() : [];
 
         $category_expenses = ExpenseCategory::select('expense_categories.category_name', DB::raw('CAST(SUM(expenses.amount) AS DOUBLE) as total'))
             ->leftJoin('expenses', 'expense_categories.id', '=', 'expenses.category_type_id')
@@ -69,10 +69,10 @@ class DashboardController extends Controller
             'category_total' => json_encode($category_expenses->pluck('total')),
             'period_income' => (double)formateNumber($period_income),
             'period_expenses' => (double)formateNumber($period_expenses),
-            'lowest_category_name' => $lowest_category['category']['category_name'],
-            'lowest_category_amount' => (double)formateNumber($lowest_category['total_amount']),
-            'highest_category_name' => $highest_category['category']['category_name'],
-            'highest_category_amount' => (double)formateNumber($highest_category['total_amount']),
+            'lowest_category_name' => $lowest_category['category']['category_name'] ?? 'Not Available',
+            'lowest_category_amount' => (double)formateNumber($lowest_category['total_amount'] ?? 0),
+            'highest_category_name' => $highest_category['category']['category_name'] ?? 'Not Available',
+            'highest_category_amount' => (double)formateNumber($highest_category['total_amount'] ?? 0),
             'recent_transations' => $recent_transations,
         ];
         return view('dashboard.index', $response_data);
