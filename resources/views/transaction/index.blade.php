@@ -216,7 +216,7 @@
                         setTimeout(() => {
                             updateSummaryBoxes(json.gross_debits, json.gross_credits);
                             $('.amount_section').removeClass('shimmer')
-                        }, 1000);
+                        }, 3000);
                         return json.data;
                     }
                 },
