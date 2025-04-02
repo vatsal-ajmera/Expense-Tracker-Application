@@ -22,15 +22,10 @@
         .shimmer .dash-widgetimg {
             display: none; /* Hide the icon section */
         }
-
-
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-
-
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 @endsection
 @section('content')
@@ -221,7 +216,7 @@
                         setTimeout(() => {
                             updateSummaryBoxes(json.gross_debits, json.gross_credits);
                             $('.amount_section').removeClass('shimmer')
-                        }, 5000);
+                        }, 1000);
                         return json.data;
                     }
                 },

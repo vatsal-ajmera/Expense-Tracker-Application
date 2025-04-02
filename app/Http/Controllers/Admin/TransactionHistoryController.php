@@ -10,6 +10,7 @@ use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class TransactionHistoryController extends Controller
 {
@@ -38,81 +39,91 @@ class TransactionHistoryController extends Controller
     }
 
     public function getRecords(Request $request)
-    {
+    {   
+
         if ($request->ajax()) {
             $gross_debits = 0;
             $gross_credits = 0;
 
-            if (!empty($request->trans_type) && $request->trans_type == 'credit') {
-                $expenses = collect([]);
-            } else {
-                $expenses = Expense::orderBy('expense_date', 'desc');
-        
-                if ($request->has('account_id') && !empty($request->account_id)) {
-                    $expenses->where('account_id', $request->account_id);
-                }
-        
-                if ($request->has('category_id') && !empty($request->category_id)) {
-                    $expenses->where('category_type_id', $request->category_id);
-                }
-        
-                if ($request->has('date') && !empty($request->date)) {
-                    $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
-                    $expenses->where('expense_date', $parse_date);
-                }
-                $gross_debits = $expenses->sum('amount');
-        
-                $expenses = $expenses->get()->map(function ($expense) {
-                    return [
-                        'text' => $expense->text,
-                        'account_name' => $expense->account->name,
-                        'category_name' => $expense->category->category_name,
-                        'amount' => formateNumber($expense->amount),
-                        'date' => Carbon::parse($expense->expense_date)->format('Y-m-d'),
-                        'type' => '<span class="badges bg-lightred">Debit</span>',
-                    ];
-                });
+            $expenseQuery = Expense::select([
+                'expenses.id',
+                'expenses.text',
+                'expenses.amount',
+                'expenses.expense_date as date',
+                'accounts.name as account_name',
+                'expense_categories.category_name',
+                DB::raw('"Debit" as type')
+            ])
+            ->leftJoin('accounts', 'expenses.account_id', '=', 'accounts.id')
+            ->leftJoin('expense_categories', 'expenses.category_type_id', '=', 'expense_categories.id')
+            ->orderBy('expenses.expense_date', 'desc');
+
+            // Apply filters for expenses
+            if ($request->filled('account_id')) {
+                $expenseQuery->where('expenses.account_id', $request->account_id);
             }
-        
-            // Handle incomes
-            if (($request->has('category_id') && !empty($request->category_id)) || (!empty($request->trans_type) && $request->trans_type == 'debit')) {
-                $incomes = collect([]); // Empty collection instead of empty array
-            } else {
-                $incomes = Income::orderBy('date', 'desc');
-        
-                if ($request->has('account_id') && !empty($request->account_id)) {
-                    $incomes->where('account_id', $request->account_id);
-                }
-        
-                if ($request->has('date') && !empty($request->date)) {
-                    $parse_date = Carbon::parse($request->date)->format('Y-m-d H:i:s');
-                    $incomes->where('date', $parse_date);
-                }
-                $gross_credits = $incomes->sum('amount');
-        
-                $incomes = $incomes->get()->map(function ($income) {
-                    return [
-                        'text' => $income->notes,
-                        'account_name' => $income->account->name,
-                        'category_name' => 'Credit',
-                        'amount' => formateNumber($income->amount),
-                        'date' => Carbon::parse($income->date)->format('Y-m-d'),
-                        'type' => '<span class="badges bg-lightgreen">Credit</span>',
-                    ];
-                });
+
+            if ($request->filled('category_id')) {
+                $expenseQuery->where('expenses.category_type_id', $request->category_id);
             }
-        
-            // Merge collections and sort by date
-            $mergedData = $expenses->merge($incomes)->sortByDesc('date');
-        
-            return DataTables::of($mergedData)
-                ->addIndexColumn()
+            if ($request->filled('trans_type')) {
+                $expenseQuery->where('type', $request->trans_type);
+            }
+
+            if ($request->filled('date')) {
+                $expenseQuery->whereDate('expenses.expense_date', Carbon::parse($request->date)->format('Y-m-d'));
+            }
+
+            // Compute total debits efficiently
+            $gross_debits = (clone $expenseQuery)->sum('expenses.amount');
+
+            // Income Query Optimization
+            $incomeQuery = Income::select([
+                'incomes.id',
+                'incomes.notes as text',
+                'incomes.amount',
+                'incomes.date as expense_date as date',
+                'accounts.name as account_name',
+                DB::raw('"Credit" as category_name'),
+                DB::raw('"Credit" as type')
+            ])
+            ->leftJoin('accounts', 'incomes.account_id', '=', 'accounts.id')
+            ->orderBy('incomes.date', 'desc');
+
+            // Apply filters for incomes
+            if ($request->filled('account_id')) {
+                $incomeQuery->where('incomes.account_id', $request->account_id);
+            }
+
+            if ($request->filled('date')) {
+                $incomeQuery->whereDate('incomes.date', Carbon::parse($request->date)->format('Y-m-d'));
+            }
+            if ($request->filled('trans_type')) {
+                $expenseQuery->where('type', $request->trans_type);
+            }
+
+            // Compute total credits efficiently
+            $gross_credits = (clone $incomeQuery)->sum('incomes.amount');
+
+            // Combine Both Queries Using UNION
+            $combinedQuery = $expenseQuery->unionAll($incomeQuery);
+
+            return DataTables::of(DB::table(DB::raw("({$combinedQuery->toSql()}) as transactions"))
+                ->mergeBindings($combinedQuery->getQuery()))
+                ->editColumn('amount', fn($row) => formateNumber($row->amount))
+                ->editColumn('date', fn($row) => Carbon::parse($row->date)->format('Y-m-d'))
+                ->addColumn('type', function ($row) {
+                    return $row->type == 'Debit' 
+                        ? '<span class="badges bg-lightred">Debit</span>' 
+                        : '<span class="badges bg-lightgreen">Credit</span>';
+                })
                 ->rawColumns(['type'])
+                ->addIndexColumn()
                 ->with([
                     'gross_debits' => $gross_debits,
                     'gross_credits' => $gross_credits,
                 ])
-                ->make(TRUE);
+                ->make(true);
         }
     }
 }
