@@ -49,7 +49,7 @@ class AuthController extends Controller
         if ($auth->attempt($request->only('email', 'password'), $remember_me)) :
             $user = $auth->user();
 
-            if (empty($user->google2fa_secret) and $user->auth_verified == FALSE) {
+            if (empty($user->google2fa_secret) and $user->auth_verified == FALSE && $user->two_fa_varications == true) {
                 $user->google2fa_secret = $this->google2fa->generateSecretKey();
                 $user->save();
 
@@ -71,6 +71,19 @@ class AuthController extends Controller
     }
     public function authenticate_user()
     {
+        $auth = auth()->guard($this->gaurd);
+        $user = $auth->user();
+        if (empty($user->google2fa_secret) and $user->auth_verified == FALSE && $user->two_fa_varications == true) {
+            $user->google2fa_secret = $this->google2fa->generateSecretKey();
+            $user->save();
+
+            $qr_image = $this->google2fa->getQRCodeInline(
+                'Air Expense APP',
+                $user->email,
+                $user->google2fa_secret
+            );
+            Session::put('qr_image', $qr_image);
+        }
         $this->meta_data = [
             'title' => '2 FA Authentication',
             'description' => '2 FA Authentication',

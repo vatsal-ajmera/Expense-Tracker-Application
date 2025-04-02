@@ -63,6 +63,7 @@ class ProfileController extends Controller
         $this->auth_user->last_name = $request->last_name; 
         $this->auth_user->phone = $request->phone; 
         $this->auth_user->email = $request->email; 
+        $this->auth_user->two_fa_varications = !empty($request->two_fa_varications && $request->two_fa_varications == 'on') ? true : false; 
         if (!empty($request->password)) {
             $this->auth_user->password = $request->password; 
         }
