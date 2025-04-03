@@ -42,6 +42,7 @@ Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::cla
     Route::group(['prefix' => '', 'as' => '', 'middleware' => [AuthenticateUser::class, Google2FA::class]], function () {
         Route::get('change-language/{lang}', [LanguageController::class, 'changeAppLanguage'])->name('change_app_language');
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('get-transactions', [DashboardController::class, 'getTransactions'])->name('get.transactions');
         Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {

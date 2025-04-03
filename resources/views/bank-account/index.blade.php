@@ -108,7 +108,7 @@
 			columns: [
 				{ data: 'name', name: 'name' },
 				{ data: 'type', name: 'type' },
-				{ data: 'limit', name: 'limit' },
+				{ data: 'availble_limit', name: 'availble_limit' },
 				{
 					data: 'action',
 					name: 'action',

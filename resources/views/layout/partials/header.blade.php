@@ -44,6 +44,8 @@
             </div>
         </li>
         <!-- /Search -->
+        
+        <a href="{{ Route('expense.create') }}" class="btn btn-primary">Add Expense</a>
 
         <!-- Flag -->
         <li class="nav-item dropdown has-arrow flag-nav nav-item-box">

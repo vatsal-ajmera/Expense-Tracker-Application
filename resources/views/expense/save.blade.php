@@ -55,7 +55,7 @@
 						<div class="col-lg-4 col-sm-6 col-12">
 							<div class="form-group">
 								<label>Expense Amount</label>
-								<input type="text" name="amount" placeholder="Expense amount here" value='{{ $expense->amount ?? '' }}'>
+								<input type="text" name="amount" placeholder="Expense amount here" value='{{ $expense->amount ?? '' }}' readonly>
 							</div>
 						</div>
 						<div class="col-lg-4 col-sm-6 col-12">

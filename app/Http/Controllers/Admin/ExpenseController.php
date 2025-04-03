@@ -112,6 +112,7 @@ class ExpenseController extends Controller
         ]);
         $data = $request;
         $save_array = [];
+        $total_expense = [];
         foreach ($data['account_name'] as $key => $value) {
             $save_array[$key]['user_id'] = $this->auth_user->id;
             $save_array[$key]['account_id'] = $value;
@@ -120,9 +121,21 @@ class ExpenseController extends Controller
             $save_array[$key]['amount'] = $data['amount'][$key];
             $save_array[$key]['expense_date'] = Carbon::createFromFormat('d-m-Y', $data['expense_date'])->format('Y-m-d');
             $save_array[$key]['status'] = $data['status'][$key];
+
+            if (!isset($total_expense[$value])) {
+                $total_expense[$value] = 0;
+            }
+            $total_expense[$value] += $data['amount'][$key];
         }
         $status = Expense::insert($save_array);
         if ($status == TRUE) {
+            foreach ($total_expense as $account_id => $amount) {
+                $account = Account::find($account_id);
+                if ($account) {
+                    $account->availble_limit -= $amount;
+                    $account->save();
+                }
+            }
             $data = ['redirect' => $this->redirect_after_login];
             return $this->send_response($data, 'Expense saved successfully');
         } else {

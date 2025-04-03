@@ -77,4 +77,23 @@ class DashboardController extends Controller
         ];
         return view('dashboard.index', $response_data);
     }
+
+    public function getTransactions(Request $request) {
+        $filter = $request->query('filter');
+        $recent_transations = Expense::select('id', 'text', 'amount', 'account_id', 'category_type_id')
+            ->with([
+                'category:id,category_name',
+                'account:id,name'
+            ])
+        ->when($filter == 'today', function($query) {
+            $query->whereBetween('expense_date', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()]);
+        })
+        ->when($filter == 'yesterday', function($query) {
+            $query->whereBetween('expense_date', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()]);
+        })->get();
+        
+        $renter_trans = view('dashboard.renderTrans', compact('recent_transations'))->render();
+        return response()->json(['data' => $renter_trans]);
+    }
+    
 }

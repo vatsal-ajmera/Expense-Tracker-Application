@@ -57,10 +57,22 @@
                         <div class="card flex-fill">
 							<div class="card-header pb-0 d-flex justify-content-between align-items-center">
 								<h4 class="card-title mb-0">Recent Transactions</h4>
+                                <div class="graph-sets">
+									<div class="dropdown">
+                                        <button class="btn btn-white btn-sm dropdown-toggle" type="button" id="trans-filter" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span id="selected-filter">Today</span> 
+                                            <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="trans-filter">
+                                            <li><a href="javascript:void(0);" class="dropdown-item filter-option" data-filter="today">Today</a></li>
+                                            <li><a href="javascript:void(0);" class="dropdown-item filter-option" data-filter="yesterday">Yesterday</a></li>
+                                        </ul>
+                                    </div>
+								</div>
 							</div>
 							<div class="card-body">
 								<div class="table-responsive dataview">
-									<table class="table datatable ">
+									<table class="table datatable " id="transactions-table">
 										<thead>
 											<tr>
 												<th>Sno</th>
@@ -163,5 +175,21 @@
             );
         });
 
+    
+        $('.filter-option').click(function() {
+            let filterValue = $(this).data('filter');
+            $('#selected-filter').text($(this).text());
+            $.ajax({
+                url: "/get-transactions",
+                type: "GET",
+                data: { filter: filterValue },
+                success: function(response) {
+                    $('#transactions-table').html(response.data);
+                },
+                error: function(xhr) {
+                    console.error("Error fetching transactions", xhr);
+                }
+            });
+        });
     </script>
 @endsection

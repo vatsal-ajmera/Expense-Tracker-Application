@@ -76,7 +76,7 @@ class IncomeController extends Controller
         ]);
 
         if (! empty($request->edit_id)) {
-            $income = Income::find($request->edit_id);
+            $income = Income::with('account')->find($request->edit_id);
         } else {
             $income = new Income();
         }
@@ -91,7 +91,10 @@ class IncomeController extends Controller
             $path = $file->storeAs('uploads/income', $filename, 'public');
             $income->attachment = $filename;
         }
-        $income->save();
+        if ($income->save()) {
+            $income->account->availble_limit = $income->account->availble_limit + $request->amount;
+            $income->account->save();    
+        }
         $data = [
             'redirect' => $this->redirect_after_login,
         ];
