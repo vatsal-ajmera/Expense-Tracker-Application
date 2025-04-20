@@ -66,8 +66,8 @@ class TransactionHistoryController extends Controller
             if ($request->filled('category_id')) {
                 $expenseQuery->where('expenses.category_type_id', $request->category_id);
             }
-            if ($request->filled('trans_type')) {
-                $expenseQuery->where('type', $request->trans_type);
+            if ($request->filled('trans_type') && $request->trans_type === 'Credit') {
+                $expenseQuery->whereRaw('0 = 1');
             }
 
             if ($request->filled('date')) {
@@ -98,8 +98,8 @@ class TransactionHistoryController extends Controller
             if ($request->filled('date')) {
                 $incomeQuery->whereDate('incomes.date', Carbon::parse($request->date)->format('Y-m-d'));
             }
-            if ($request->filled('trans_type')) {
-                $expenseQuery->where('type', $request->trans_type);
+            if ($request->filled('trans_type') && $request->trans_type === 'Debit') {
+                $incomeQuery->whereRaw('0 = 1');    
             }
 
             // Compute total credits efficiently

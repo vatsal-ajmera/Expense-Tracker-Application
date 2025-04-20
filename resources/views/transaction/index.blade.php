@@ -147,8 +147,8 @@
                                                         <div class="form-group">
                                                             <select class="select" id="trans_type">
                                                                 <option value="">Select Any One</option>
-                                                                <option value="credit">Credit</option>
-                                                                <option value="debit">Debit</option>
+                                                                <option value="Credit">Credit</option>
+                                                                <option value="Debit">Debit</option>
                                                             </select>
                                                         </div>
                                                     </div>
