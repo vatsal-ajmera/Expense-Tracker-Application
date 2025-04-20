@@ -70,8 +70,15 @@ class TransactionHistoryController extends Controller
                 $expenseQuery->whereRaw('0 = 1');
             }
 
-            if ($request->filled('date')) {
-                $expenseQuery->whereDate('expenses.expense_date', Carbon::parse($request->date)->format('Y-m-d'));
+            // if ($request->filled('date')) {
+            //     $expenseQuery->whereDate('expenses.expense_date', Carbon::parse($request->date)->format('Y-m-d'));
+            // }
+
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $expenseQuery->whereBetween('expenses.expense_date', [
+                    Carbon::parse($request->start_date)->startOfDay(),
+                    Carbon::parse($request->end_date)->endOfDay()
+                ]);
             }
 
             // Compute total debits efficiently
@@ -95,9 +102,13 @@ class TransactionHistoryController extends Controller
                 $incomeQuery->where('incomes.account_id', $request->account_id);
             }
 
-            if ($request->filled('date')) {
-                $incomeQuery->whereDate('incomes.date', Carbon::parse($request->date)->format('Y-m-d'));
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $incomeQuery->whereBetween('incomes.date', [
+                    Carbon::parse($request->start_date)->startOfDay(),
+                    Carbon::parse($request->end_date)->endOfDay()
+                ]);
             }
+
             if ($request->filled('trans_type') && $request->trans_type === 'Debit') {
                 $incomeQuery->whereRaw('0 = 1');    
             }

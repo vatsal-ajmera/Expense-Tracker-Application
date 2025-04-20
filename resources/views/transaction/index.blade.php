@@ -97,7 +97,7 @@
                                 <div class="card mb-0" id="filter_inputs">
                                     <div class="card-body pb-0">
                                         <div class="row">
-                                            <div class="col-lg-3 col-sm-12">
+                                            <div class="col-lg-4 col-sm-12">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
@@ -111,9 +111,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-12">
+                                            <div class="col-lg-4 col-sm-12">
                                                 <div class="row">
-                                                    <div class="col-lg col-sm-6 col-12">
+                                                    <div class="col-lg col-sm-6 col-6">
                                                         <div class="form-group">
                                                             <select class="select" id="category_id">
                                                                 <option value="">Select Any Type</option>
@@ -125,13 +125,29 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-12">
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-lg col-sm-6 col-12">
+                                                        <div class="form-group">
+                                                            <select class="select" id="trans_type">
+                                                                <option value="">Select Any One</option>
+                                                                <option value="Credit">Credit</option>
+                                                                <option value="Debit">Debit</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-6">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
                                                             <div class="d-flex align-items-center">
                                                                 <div class="input-groupicon flex-grow-1">
-                                                                    <input type="text" placeholder="Choose Date" class="datetimepicker form-control" id="date" name="date">
+                                                                    <input type="text" placeholder="Choose Start Date" class="datetimepicker form-control" id="start_date" name="start_date">
                                                                     <a class="addonset">
                                                                         <img src="{{ calenderIcon() }}" alt="img">
                                                                     </a>
@@ -141,15 +157,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-12">
+                                            <div class="col-lg-6 col-sm-6">
                                                 <div class="row">
                                                     <div class="col-lg col-sm-6 col-12">
                                                         <div class="form-group">
-                                                            <select class="select" id="trans_type">
-                                                                <option value="">Select Any One</option>
-                                                                <option value="Credit">Credit</option>
-                                                                <option value="Debit">Debit</option>
-                                                            </select>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="input-groupicon flex-grow-1">
+                                                                    <input type="text" placeholder="Choose End Date" class="datetimepicker form-control" id="end_date" name="end_date">
+                                                                    <a class="addonset">
+                                                                        <img src="{{ calenderIcon() }}" alt="img">
+                                                                    </a>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -203,7 +222,8 @@
                         d.account_id = $('#account_id').val();
                         d.category_id = $('#category_id').val();
                         d.trans_type = $('#trans_type').val();
-                        d.date = $('#date').val();
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
                     },
                     beforeSend: function() {
                         $('#global-loader').show();
@@ -267,14 +287,18 @@
             $('#trans_type').change(function () {
                 table.draw();
             });
-            $('#date').on('dp.hide', function(e) {  
+            $('#start_date').on('dp.hide', function(e) {  
+                table.draw();
+            });
+            $('#end_date').on('dp.hide', function(e) {  
                 table.draw();
             });
 
             $('#refresh_search').click(function () {
                 let table = $('.yajra-datatable').DataTable();
                 table.search('').columns().search('')
-                $('#date').val('');
+                $('#start_date').val('');
+                $('#end_date').val('');
                 $('input[type="text"], select').val('');
                 $('input, select').trigger('change'); 
 
